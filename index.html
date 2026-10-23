@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>智读 · PDF 智能学习辅导平台（交互原型）</title>
+  <style>
+    :root {
+      --bg: #F7F4EF;
+      --bg-card: #FFFFFF;
+      --primary: #1E5A3F;
+      --primary-light: #2A7A55;
+      --primary-soft: #E8F0EB;
+      --accent: #C4A35A;
+      --text: #0F1E17;
+      --text-muted: #4A5C52;
+      --border: #E5DFD3;
+      --danger: #B54A3A;
+      --radius: 12px;
+      --shadow: 0 4px 20px rgba(15, 30, 23, 0.06);
+      --font: "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.55;
+    }
+
+    /* ===== Layout ===== */
+    .app {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+    @media (max-width: 860px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .sidebar.mobile-open { display: flex; position: fixed; inset: 0; z-index: 100; }
+    }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      background: var(--primary);
+      color: #fff;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      margin-bottom: 12px;
+    }
+    .brand-dot {
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    .brand h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .brand span {
+      font-size: 11px;
+      opacity: 0.7;
+      display: block;
+      margin-top: 2px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      color: rgba(255,255,255,0.85);
+      transition: background 0.15s;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .nav-item.active {
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+      font-weight: 600;
+    }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.9; }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 12px 8px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      font-size: 12px;
+      opacity: 0.65;
+      line-height: 1.5;
+    }
+
+    /* ===== Main ===== */
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .topbar {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .demo-banner {
+      background: linear-gradient(90deg, #1E5A3F, #2A7A55);
+      color: #fff;
+      padding: 10px 28px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .demo-banner span:first-child {
+      font-weight: 600;
+      background: rgba(255,255,255,0.18);
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+    .demo-banner button {
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      opacity: 0.8;
+    }
+    .demo-banner button:hover { opacity: 1; }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .menu-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+    }
+    @media (max-width: 860px) { .menu-btn { display: block; } }
+    .page-title {
+      font-size: 17px;
+      font-weight: 600;
+    }
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .user-avatar {
+      width: 26px; height: 26px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+    }
+
+    /* ===== Cards & UI ===== */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 24px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--primary-light); }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+    .btn-secondary:hover { background: #d4e5db; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--bg); }
+    .btn-sm { padding: 6px 12px; font-size: 13px; }
+    .btn-block { width: 100%; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .badge-private { background: #f0e6d8; color: #8a6d3b; }
+    .badge-class { background: #e0edf7; color: #2a5a8a; }
+    .badge-public { background: var(--primary-soft); color: var(--primary); }
+    .badge-review { background: #fde8e4; color: var(--danger); }
+
+    /* ===== Views ===== */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Home */
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #2a6b4a 100%);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero h2 {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .hero p {
+      font-size: 15px;
+      opacity: 0.9;
+      max-width: 520px;
+      position: relative;
+    }
+    .hero-actions {
+      margin-top: 22px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .hero .btn-primary {
+      background: #fff;
+      color: var(--primary);
+    }
+    .hero .btn-primary:hover { background: #f0f0f0; }
+    .hero .btn-ghost {
+      border-color: rgba(255,255,255,0.4);
+      color: #fff;
+    }
+    .hero .btn-ghost:hover { background: rgba(255,255,255,0.12); }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* PDF list */
+    .pdf-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .pdf-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s;
+      position: relative;
+    }
+    .pdf-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+    .pdf-card.selected {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-soft);
+    }
+    .pdf-icon {
+      width: 40px; height: 40px;
+      background: var(--primary-soft);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+    .pdf-name {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pdf-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .pdf-actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Upload zone */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 40px 24px;
+      text-align: center;
+      background: var(--bg-card);
+      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+    .upload-zone.dragover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+    .upload-zone input { display: none; }
+    .upload-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+    .upload-zone h3 {
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+    .upload-zone p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Process steps */
+    .process-steps {
+      display: none;
+      margin-top: 24px;
+    }
+    .process-steps.show { display: block; }
+    .step-list {
+      list-style: none;
+    }
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .step-item.done { color: var(--primary); }
+    .step-item.active { color: var(--text); font-weight: 500; }
+    .step-dot {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .step-item.done .step-dot {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .step-item.active .step-dot {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Chat / Q&A */
+    .qa-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 20px;
+      height: calc(100vh - 140px);
+      min-height: 480px;
+    }
+    @media (max-width: 900px) {
+      .qa-layout { grid-template-columns: 1fr; height: auto; }
+      .qa-sidebar { max-height: 200px; overflow-y: auto; }
+    }
+    .qa-sidebar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .qa-sidebar h3 {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .qa-pdf-item {
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .qa-pdf-item:hover { background: var(--bg); }
+    .qa-pdf-item.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 500;
+    }
+    .qa-main {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .chat-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 280px;
+    }
+    .msg {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .msg-user {
+      align-self: flex-end;
+      background: var(--primary);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .msg-ai {
+      align-self: flex-start;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+    .msg-ai .citation {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: var(--primary-soft);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .msg-ai .thinking {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+    .chat-input-area {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    .chat-input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: none;
+      min-height: 44px;
+      max-height: 120px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .chat-input:focus { border-color: var(--primary); }
+    .suggested {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 20px 12px;
+    }
+    .chip {
+      padding: 6px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .chip:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    /* Summary */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 800px) { .summary-grid { grid-template-columns: 1fr; } }
+    .summary-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .summary-card h3 {
+      font-size: 15px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .summary-card ul {
+      padding-left: 18px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .summary-card li { margin-bottom: 6px; }
+    .kp-item {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .kp-item strong { color: var(--primary); }
+
+    /* Admin */
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--bg);
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 30, 23, 0.45);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--bg-card);
+      border-radius: 14px;
+      max-width: 480px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    .modal h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .modal p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+    }
+    .form-group select:focus,
+    .form-group input:focus { border-color: var(--primary); }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--primary);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 300;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+    }
+    .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+    .link-input-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .link-input-row input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+    }
+    .link-input-row input:focus { border-color: var(--primary); }
+
+    .typing {
+      display: flex;
+      gap: 4px;
+      padding: 8px 0;
+    }
+    .typing span {
+      width: 6px; height: 6px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+    .typing span:nth-child(2) { animation-delay: 0.15s; }
+    .typing span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-dot"></div>
+        <div>
+          <h1>智读</h1>
+          <span>PDF 智能学习辅导</span>
+        </div>
+      </div>
+      <button class="nav-item active" data-view="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        首页
+      </button>
+      <button class="nav-item" data-view="upload">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        上传 PDF
+      </button>
+      <button class="nav-item" data-view="library">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        我的资料
+      </button>
+      <button class="nav-item" data-view="qa">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        智能问答
+      </button>
+      <button class="nav-item" data-view="summary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        学习总结
+      </button>
+      <button class="nav-item" data-view="admin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        管理员审核
+      </button>
+      <div class="sidebar-footer">
+        原型演示 · 非生产环境<br>
+        数据均为模拟，仅供体验流程
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-btn" id="menuBtn" aria-label="菜单">☰</button>
+          <div class="page-title" id="pageTitle">首页</div>
+        </div>
+        <div class="user-chip">
+          <div class="user-avatar">学</div>
+          小明 · 初二
+        </div>
+      </header>
+
+      <div class="demo-banner" id="demoBanner">
+        <span>🧪 交互原型演示</span>
+        <span>可体验：上传流程 · 问答（带页码引用）· 学习总结 · 权限共享 · 管理员审核。数据均为模拟，刷新后重置。</span>
+        <button onclick="document.getElementById('demoBanner').style.display='none'" aria-label="关闭">×</button>
+      </div>
+
+      <div class="content">
+        <!-- ========== HOME ========== -->
+        <div class="view active" id="view-home">
+          <div class="hero">
+            <h2>让每一份 PDF<br>都成为你的私人老师</h2>
+            <p>上传教材、讲义或试卷，AI 会读懂内容，按页码讲解，帮你理清思路，而不是直接给答案。</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" onclick="switchView('upload')">上传 PDF 开始学习</button>
+              <button class="btn btn-ghost" onclick="switchView('qa')">直接提问</button>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-pdfs">3</div>
+              <div class="stat-label">我的 PDF</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-qa">12</div>
+              <div class="stat-label">今日提问</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">5</div>
+              <div class="stat-label">每日上限</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">2</div>
+              <div class="stat-label">待审核共享</div>
+            </div>
+          </div>
+          <div class="section-title">
+            <span>最近使用的资料</span>
+            <button class="btn btn-sm btn-ghost" onclick="switchView('library')">查看全部</button>
+          </div>
+          <div class="pdf-grid" id="home-pdf-list"></div>
+        </div>
+
+        <!-- ========== UPLOAD ========== -->
+        <div class="view" id="view-upload">
+          <div class="card" style="max-width: 640px; margin: 0 auto;">
+            <div class="card-title">上传 PDF 或输入链接</div>
+            <div class="card-desc">支持教材、讲义、试卷。文件大小建议 ≤ 50MB。网络链接必须是公开可访问的 PDF。</div>
+
+            <div class="upload-zone" id="uploadZone">
+              <input type="file" id="fileInput" accept=".pdf,application/pdf" />
+              <div class="upload-icon">📄</div>
+              <h3>点击或拖拽 PDF 到此处</h3>
+              <p>仅解析公开、合法资源 · 不会绕过付费墙</p>
+            </div>
+
+            <div class="link-input-row">
+              <input type="url" id="linkInput" placeholder="或粘贴公开 PDF 链接，例如 https://example.com/math.pdf" />
+              <button class="btn btn-secondary" id="linkBtn">解析链接</button>
+            </div>
+
+            <div class="process-steps" id="processSteps">
+              <ul class="step-list" id="stepList"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== LIBRARY ========== -->
+        <div class="view" id="view-library">
+          <div class="section-title">
+            <span>我的资料库</span>
+            <button class="btn btn-sm btn-primary" onclick="switchView('upload')">+ 上传</button>
+          </div>
+          <div class="pdf-grid" id="library-list"></div>
+        </div>
+
+        <!-- ========== Q&A ========== -->
+        <div class="view" id="view-qa">
+          <div class="qa-layout">
+            <div class="qa-sidebar">
+              <h3>选择资料</h3>
+              <div id="qa-pdf-list"></div>
+            </div>
+            <div class="qa-main">
+              <div class="chat-header">
+                <span id="chatPdfName">请先选择一份 PDF</span>
+                <span class="badge badge-private" id="chatPdfBadge" style="display:none;">私有</span>
+              </div>
+              <div class="chat-messages" id="chatMessages">
+                <div class="empty-state">
+                  <div class="icon">💬</div>
+                  <p>选择左侧一份 PDF，然后提问<br>例如：「二次函数图像怎么画？」「这道题的解题思路是什么？」</p>
+                </div>
+              </div>
+              <div class="suggested" id="suggestedChips" style="display:none;"></div>
+              <div class="chat-input-area">
+                <textarea class="chat-input" id="chatInput" rows="1" placeholder="输入你的问题…（按 Enter 发送）" disabled></textarea>
+                <button class="btn btn-primary" id="sendBtn" disabled>发送</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== SUMMARY ========== -->
+        <div class="view" id="view-summary">
+          <div class="section-title">
+            <span>学习总结 · 基于最近问答</span>
+            <select id="summaryPdfSelect" style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:inherit;">
+            </select>
+          </div>
+          <div class="summary-grid" id="summaryContent">
+            <div class="summary-card">
+              <h3>📌 知识点梳理</h3>
+              <div id="kpList"></div>
+            </div>
+            <div class="summary-card">
+              <h3>⚠️ 易错点提示</h3>
+              <ul id="mistakeList"></ul>
+            </div>
+            <div class="summary-card" style="grid-column: 1 / -1;">
+              <h3>📝 推荐练习方向</h3>
+              <ul id="practiceList"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== ADMIN ========== -->
+        <div class="view" id="view-admin">
+          <div class="section-title">
+            <span>共享资源审核</span>
+            <span style="font-size:13px;color:var(--text-muted);font-weight:400;">仅管理员可见 · 原型演示</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>文件名</th>
+                  <th>上传者</th>
+                  <th>学科 / 年级</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="adminTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share Modal -->
+  <div class="modal-overlay" id="shareModal">
+    <div class="modal">
+      <h3>设置共享权限</h3>
+      <p>上传共享资源时需选择学科、年级等信息，并通过审核后才能对他人可见。</p>
+      <div class="form-group">
+        <label>权限类型</label>
+        <select id="sharePerm">
+          <option value="private">私有（仅自己）</option>
+          <option value="class">班级共享</option>
+          <option value="public">平台公开（需审核）</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>学科</label>
+        <select id="shareSubject">
+          <option>数学</option>
+          <option>物理</option>
+          <option>化学</option>
+          <option>语文</option>
+          <option>英语</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>年级</label>
+        <select id="shareGrade">
+          <option>初一</option>
+          <option>初二</option>
+          <option>初三</option>
+          <option>高一</option>
+          <option>高二</option>
+          <option>高三</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>是否原创 / 已获授权</label>
+        <select id="shareAuth">
+          <option>是，本人原创</option>
+          <option>是，已获授权</option>
+          <option>否（仅私有学习）</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeShareModal()">取消</button>
+        <button class="btn btn-primary" onclick="confirmShare()">确认上传</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ========== Mock Data ==========
+    const samplePdfs = [
+      {
+        id: 'p1',
+        name: '二次函数专题讲义.pdf',
+        subject: '数学',
+        grade: '初二',
+        pages: 24,
+        perm: 'private',
+        size: '2.1 MB',
+        uploaded: '2026-10-20'
+      },
+      {
+        id: 'p2',
+        name: '物理·力学基础练习.pdf',
+        subject: '物理',
+        grade: '初二',
+        pages: 18,
+        perm: 'class',
+        size: '1.8 MB',
+        uploaded: '2026-10-18'
+      },
+      {
+        id: 'p3',
+        name: '英语阅读理解专项.pdf',
+        subject: '英语',
+        grade: '初二',
+        pages: 32,
+        perm: 'public',
+        size: '3.4 MB',
+        uploaded: '2026-10-15'
+      }
+    ];
+
+    const pendingReviews = [
+      { id: 'r1', name: '化学方程式配平技巧.pdf', uploader: '李老师', subject: '化学', grade: '初三', status: 'review' },
+      { id: 'r2', name: '文言文实词总结.pdf', uploader: '王同学', subject: '语文', grade: '初二', status: 'review' }
+    ];
+
+    // Simulated knowledge base for RAG-style answers
+    const knowledge = {
+      p1: {
+        name: '二次函数专题讲义.pdf',
+        topics: ['二次函数定义', '图像与性质', '顶点式', '配方', '应用题'],
+        answers: {
+          '二次函数': {
+            text: '二次函数的一般形式是 y = ax² + bx + c（a ≠ 0）。图像是一条抛物线。当 a > 0 时开口向上，a < 0 时开口向下。对称轴为 x = -b/(2a)，顶点坐标为 (-b/(2a), (4ac-b²)/(4a))。',
+            page: 3,
+            section: '§1.1 ��次函数的定义与图像'
+          },
+          '图像': {
+            text: '画二次函数图像的步骤：\n1. 确定开口方向（看 a 的符号）\n2. 求出对称轴和顶点\n3. 取对称点（至少 3 对）\n4. 用平滑曲线连接\n\n建议优先掌握「顶点式」y = a(x-h)² + k，这样顶点 (h,k) 一目了然。',
+            page: 7,
+            section: '§2.2 图像画法与性质'
+          },
+          '配方': {
+            text: '配方是把一般式变成顶点式的关键技巧：\ny = ax² + bx + c = a(x² + (b/a)x) + c\n= a[x² + (b/a)x + (b/2a)² - (b/2a)²] + c\n= a[(x + b/(2a))² - (b/(2a))²] + c\n最后整理成 y = a(x-h)² + k。\n注意：配方时括号内要「凑完全平方」，常数项要相应调整。',
+            page: 11,
+            section: '§3.1 配方法'
+          },
+          'default': {
+            text: '根据讲义内容，二次函数的核心是「系数决定形状与位置」。建议先牢固掌握一般式与顶点式的互化，再去做应用题。遇到具体题目时，可以告诉我题目内容或页码，我按材料帮你理清思路（不会直接给最终答案）。',
+            page: 1,
+            section: '引言'
+          }
+        }
+      },
+      p2: {
+        name: '物理·力学基础练习.pdf',
+        topics: ['力的概念', '重力', '弹力', '摩擦力', '二力平衡'],
+        answers: {
+          '力': {
+            text: '力是物体对物体的作用。力的三要素：大小、方向、作用点。单位是牛顿（N）。\n重力：G = mg，方向竖直向下。\n弹力：发生弹性形变的物体对接触物体产生的力。\n摩擦力：阻碍相对运动（或相对运动趋势）的力，分为静摩擦和滑动摩擦。',
+            page: 2,
+            section: '第1章 力'
+          },
+          '平衡': {
+            text: '二力平衡的条件：\n1. 作用在同一物体上\n2. 大小相等\n3. 方向相反\n4. 作用在同一直线上\n\n满足二力平衡时，物体处于静止或匀速直线运动状态（平衡状态）。解题时常用「找等大反向」来分析。',
+            page: 9,
+            section: '§2.3 二力平衡'
+          },
+          'default': {
+            text: '力学部分重点是「力的图示」和「受力分析」。建议每道题先画受力示意图，再判断是否平衡。可以把具体题目发给我，我按讲义帮你拆解思路。',
+            page: 1,
+            section: '前言'
+          }
+        }
+      },
+      p3: {
+        name: '英语阅读理解专项.pdf',
+        topics: ['主旨大意', '细节理解', '词义猜测', '推理判断'],
+        answers: {
+          '主旨': {
+            text: '主旨大意题常见问法：What is the main idea of the passage? / The best title is…\n策略：\n1. 关注首段和末段\n2. 找反复出现的关键词\n3. 排除过宽或过窄的选项\n本讲义第 5–8 页有对应练习，可结合原文定位。',
+            page: 5,
+            section: 'Unit 1 主旨大意'
+          },
+          'default': {
+            text: '阅读理解的核心是「定位 + 同义转换」。建议先带着问题扫读，圈出关键句，再对比选项。可以把具体段落或题目发给我，我按材料帮你分析。',
+            page: 1,
+            section: '使用说明'
+          }
+        }
+      }
+    };
+
+    const summaryData = {
+      p1: {
+        kps: [
+          { title: '二次函数一般式', desc: 'y = ax² + bx + c (a≠0)，a 决定开口方向与开口大小' },
+          { title: '顶点与对称轴', desc: '对称轴 x = -b/(2a)，顶点是抛物线的最高/最低点' },
+          { title: '配方法', desc: '将一般式化为顶点式，便于读出顶点坐标' }
+        ],
+        mistakes: [
+          '忘记 a ≠ 0 的条件',
+          '配方时符号处理错误（括号外的 a 漏乘）',
+          '画图像时只取顶点不取对称点，导致不对称'
+        ],
+        practice: [
+          '把一般式化为顶点式（至少练 5 题）',
+          '给定图像读出 a、顶点、对称轴',
+          '简单应用题：最大/最小面积或利润'
+        ]
+      },
+      p2: {
+        kps: [
+          { title: '力的三要素', desc: '大小、方向、作用点缺一不可' },
+          { title: '二力平衡', desc: '同体、等大、反向、共线' }
+        ],
+        mistakes: [
+          '受力分析时漏画摩擦力或支持力',
+          '把「作用力与反作用力」和「平衡力」混淆'
+        ],
+        practice: [
+          '练习画受力示意图',
+          '判断物体是否处于平衡状态'
+        ]
+      },
+      p3: {
+        kps: [
+          { title: '主旨大意题', desc: '看首尾段 + 关键词重复' },
+          { title: '细节题', desc: '定位原文 → 同义转换 → 排除干扰' }
+        ],
+        mistakes: [
+          '被选项中的原文原词迷惑（可能是陷阱）',
+          '主旨选得过宽或过窄'
+        ],
+        practice: [
+          '每天 1 篇阅读，专门练主旨题',
+          '做完后回原文验证定位句'
+        ]
+      }
+    };
+
+    // ========== State ==========
+    let currentView = 'home';
+    let selectedPdfId = null;
+    let pendingFile = null;
+    let chatHistory = {};
+
+    // ========== Helpers ==========
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2800);
+    }
+
+    function permBadge(perm) {
+      const map = {
+        private: ['badge-private', '私有'],
+        class: ['badge-class', '班级共享'],
+        public: ['badge-public', '平台公开'],
+        review: ['badge-review', '审核中']
+      };
+      const [cls, label] = map[perm] || map.private;
+      return `<span class="badge ${cls}">${label}</span>`;
+    }
+
+    function renderPdfCard(p, actions = true) {
+      return `
+        <div class="pdf-card" data-id="${p.id}" onclick="selectPdfFromCard('${p.id}')">
+          <div class="pdf-icon">📄</div>
+          <div class="pdf-name">${p.name}</div>
+          <div class="pdf-meta">
+            ${permBadge(p.perm)}
+            <span>${p.subject} · ${p.grade}</span>
+            <span>${p.pages} 页</span>
+          </div>
+          ${actions ? `
+          <div class="pdf-actions">
+            <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); openQaWith('${p.id}')">提问</button>
+            <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation(); openSummaryWith('${p.id}')">总结</button>
+          </div>` : ''}
+        </div>
+      `;
+    }
+
+    function renderAllLists() {
+      document.getElementById('home-pdf-list').innerHTML = samplePdfs.slice(0, 3).map(p => renderPdfCard(p)).join('');
+      document.getElementById('library-list').innerHTML = samplePdfs.map(p => renderPdfCard(p)).join('');
+      document.getElementById('stat-pdfs').textContent = samplePdfs.length;
+
+      // QA list
+      document.getElementById('qa-pdf-list').innerHTML = samplePdfs.map(p => `
+        <div class="qa-pdf-item ${selectedPdfId === p.id ? 'active' : ''}" onclick="selectQaPdf('${p.id}')">
+          <span>📄</span>
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</span>
+        </div>
+      `).join('');
+
+      // Summary select
+      const sel = document.getElementById('summaryPdfSelect');
+      sel.innerHTML = samplePdfs.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      if (selectedPdfId) sel.value = selectedPdfId;
+      renderSummary(sel.value || samplePdfs[0].id);
+
+      // Admin
+      document.getElementById('adminTable').innerHTML = pendingReviews.map(r => `
+        <tr>
+          <td>${r.name}</td>
+          <td>${r.uploader}</td>
+          <td>${r.subject} / ${r.grade}</td>
+          <td>${permBadge('review')}</td>
+          <td>
+            <button class="btn btn-sm btn-primary" onclick="approveReview('${r.id}')">通过</button>
+            <button class="btn btn-sm btn-ghost" onclick="rejectReview('${r.id}')">驳回</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ========== Navigation ==========
+    function switchView(name) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('view-' + name).classList.add('active');
+      const nav = document.querySelector(`.nav-item[data-view="${name}"]`);
+      if (nav) nav.classList.add('active');
+      const titles = {
+        home: '首页',
+        upload: '上传 PDF',
+        library: '我的资料',
+        qa: '智能问答',
+        summary: '学习总结',
+        admin: '管理员审核'
+      };
+      document.getElementById('pageTitle').textContent = titles[name] || name;
+      currentView = name;
+      document.getElementById('sidebar').classList.remove('mobile-open');
+      if (name === 'summary') renderSummary(document.getElementById('summaryPdfSelect').value);
+    }
+
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', () => switchView(btn.dataset.view));
+    });
+    document.getElementById('menuBtn').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('mobile-open');
+    });
+
+    // ========== Upload ==========
+    const zone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+
+    zone.addEventListener('click', () => fileInput.click());
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('dragover');
+      if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) handleFile(fileInput.files[0]);
+    });
+
+    document.getElementById('linkBtn').addEventListener('click', () => {
+      const url = document.getElementById('linkInput').value.trim();
+      if (!url) { toast('请输入链接'); return; }
+      if (!url.toLowerCase().includes('.pdf') && !url.includes('pdf')) {
+        toast('请使用公开可访问的 PDF 链接');
+        return;
+      }
+      pendingFile = { name: url.split('/').pop() || '网络PDF.pdf', fromLink: true };
+      openShareModal();
+    });
+
+    function handleFile(file) {
+      if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+        toast('请上传 PDF 文件');
+        return;
+      }
+      if (file.size > 50 * 1024 * 1024) {
+        toast('文件过大，建议 ≤ 50MB');
+        return;
+      }
+      pendingFile = file;
+      openShareModal();
+    }
+
+    function openShareModal() {
+      document.getElementById('shareModal').classList.add('show');
+    }
+    function closeShareModal() {
+      document.getElementById('shareModal').classList.remove('show');
+      pendingFile = null;
+      fileInput.value = '';
+    }
+
+    function confirmShare() {
+      const perm = document.getElementById('sharePerm').value;
+      const subject = document.getElementById('shareSubject').value;
+      const grade = document.getElementById('shareGrade').value;
+      closeShareModal();
+      runProcessPipeline(pendingFile, perm, subject, grade);
+    }
+
+    function runProcessPipeline(file, perm, subject, grade) {
+      const stepsEl = document.getElementById('processSteps');
+      const list = document.getElementById('stepList');
+      stepsEl.classList.add('show');
+      const steps = [
+        '校验文件类型、大小与版权提示',
+        '解析 PDF 文本与页码',
+        '按小节 / 段落切块（约 400–600 字）',
+        '生成向量并写入向量库',
+        '绑定用户与权限标签',
+        '完成 · 可开始提问'
+      ];
+      list.innerHTML = steps.map((s, i) => `
+        <li class="step-item" id="step-${i}">
+          <span class="step-dot">${i + 1}</span>
+          <span>${s}</span>
+        </li>
+      `).join('');
+
+      let i = 0;
+      function next() {
+        if (i > 0) {
+          document.getElementById('step-' + (i - 1)).classList.remove('active');
+          document.getElementById('step-' + (i - 1)).classList.add('done');
+          document.getElementById('step-' + (i - 1)).querySelector('.step-dot').textContent = '✓';
+        }
+        if (i < steps.length) {
+          document.getElementById('step-' + i).classList.add('active');
+          i++;
+          setTimeout(next, 600 + Math.random() * 400);
+        } else {
+          // Add to library
+          const name = file.name || file.fromLink && '网络抓取.pdf' || '新上传.pdf';
+          const id = 'p' + (samplePdfs.length + 1);
+          samplePdfs.unshift({
+            id,
+            name,
+            subject,
+            grade,
+            pages: Math.floor(Math.random() * 20) + 10,
+            perm: perm === 'public' ? 'review' : perm,
+            size: file.size ? (file.size / 1024 / 1024).toFixed(1) + ' MB' : '—',
+            uploaded: new Date().toISOString().slice(0, 10)
+          });
+          // mock knowledge
+          knowledge[id] = {
+            name,
+            topics: ['新上传内容'],
+            answers: {
+              default: {
+                text: '这份 PDF 已解析完成。你可以开始提问，我会基于文档内容回答，并标注页码来源。目前为演示模式，复杂推理请结合真实材料验证。',
+                page: 1,
+                section: '全文'
+              }
+            }
+          };
+          summaryData[id] = {
+            kps: [{ title: '待生成', desc: '多提问几次后，系统会自动整理知识点' }],
+            mistakes: ['暂无足够问答记录'],
+            practice: ['针对文档内容多提问，以生成个性化总结']
+          };
+          renderAllLists();
+          toast(perm === 'public' ? '已提交审核，通过后将对平台可见' : '上传成功，可以去「智能问答」提问了');
+          setTimeout(() => {
+            stepsEl.classList.remove('show');
+            switchView('qa');
+            selectQaPdf(id);
+          }, 1200);
+        }
+      }
+      next();
+    }
+
+    // ========== Q&A ==========
+    function selectPdfFromCard(id) {
+      selectedPdfId = id;
+    }
+    function openQaWith(id) {
+      switchView('qa');
+      selectQaPdf(id);
+    }
+    function openSummaryWith(id) {
+      switchView('summary');
+      document.getElementById('summaryPdfSelect').value = id;
+      renderSummary(id);
+    }
+
+    function selectQaPdf(id) {
+      selectedPdfId = id;
+      const p = samplePdfs.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById('chatPdfName').textContent = p.name;
+      const badge = document.getElementById('chatPdfBadge');
+      badge.style.display = 'inline-block';
+      badge.className = 'badge ' + (p.perm === 'private' ? 'badge-private' : p.perm === 'class' ? 'badge-class' : 'badge-public');
+      badge.textContent = p.perm === 'private' ? '私有' : p.perm === 'class' ? '班级共享' : '平台公开';
+
+      document.getElementById('chatInput').disabled = false;
+      document.getElementById('sendBtn').disabled = false;
+
+      // Suggested questions
+      const chips = document.getElementById('suggestedChips');
+      const topics = (knowledge[id] && knowledge[id].topics) || ['核心概念', '易错点', '例题思路'];
+      chips.style.display = 'flex';
+      chips.innerHTML = topics.slice(0, 4).map(t => `<span class="chip" onclick="askChip('${t}')">${t}是什么？</span>`).join('');
+
+      // Restore or init chat
+      const box = document.getElementById('chatMessages');
+      if (chatHistory[id] && chatHistory[id].length) {
+        box.innerHTML = chatHistory[id].map(m => renderMsg(m)).join('');
+      } else {
+        box.innerHTML = `
+          <div class="msg msg-ai">
+            <div>你好！我已经读过《${p.name}》。你可以问我文档里的知识点、例题思路或易错点。我会尽量按页码引用材料，并优先讲思路。</div>
+            <div class="citation">📎 资料已就绪 · 共 ${p.pages} 页</div>
+          </div>
+        `;
+        chatHistory[id] = [];
+      }
+      renderAllLists();
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function renderMsg(m) {
+      if (m.role === 'user') {
+        return `<div class="msg msg-user">${escapeHtml(m.text)}</div>`;
+      }
+      return `
+        <div class="msg msg-ai">
+          ${m.thinking ? `<div class="thinking">${escapeHtml(m.thinking)}</div>` : ''}
+          <div style="white-space:pre-wrap;">${escapeHtml(m.text)}</div>
+          ${m.page ? `<div class="citation">📎 依据：第 ${m.page} 页 · ${escapeHtml(m.section || '')}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function escapeHtml(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function askChip(topic) {
+      document.getElementById('chatInput').value = topic + '是什么？请结合讲义说明。';
+      sendMessage();
+    }
+
+    function matchAnswer(pdfId, question) {
+      const kb = knowledge[pdfId];
+      if (!kb) {
+        return {
+          text: '当前文档知识库尚未完成索引（演示环境）。请稍后再试，或换一份已解析的示例 PDF。',
+          page: null,
+          section: null,
+          thinking: '正在检索相关段落…'
+        };
+      }
+      const q = question.toLowerCase();
+      let best = kb.answers.default;
+      let bestScore = 0;
+      for (const key of Object.keys(kb.answers)) {
+        if (key === 'default') continue;
+        let score = 0;
+        if (q.includes(key) || question.includes(key)) score += 3;
+        // partial match for Chinese
+        for (let i = 0; i < key.length - 1; i++) {
+          if (question.includes(key.slice(i, i + 2))) score += 1;
+        }
+        if (score > bestScore) {
+          bestScore = score;
+          best = kb.answers[key];
+        }
+      }
+      // common educational keywords boost
+      if (bestScore === 0) {
+        if (/思路|怎么解|如何|步骤|讲解/.test(question)) {
+          best = {
+            text: best.text + '\n\n💡 提示：你可以试着问更具体的知识点，例如「二次函数图像怎么画」「二力平衡条件是什么」，我会按页码给你详细讲解。',
+            page: best.page,
+            section: best.section
+          };
+        }
+      }
+      return {
+        text: best.text,
+        page: best.page,
+        section: best.section,
+        thinking: '已从你有权访问的 PDF 中检索到相关段落，正在组织讲解…'
+      };
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text || !selectedPdfId) return;
+      input.value = '';
+
+      if (!chatHistory[selectedPdfId]) chatHistory[selectedPdfId] = [];
+      chatHistory[selectedPdfId].push({ role: 'user', text });
+
+      const box = document.getElementById('chatMessages');
+      // clear empty state if any
+      if (box.querySelector('.empty-state')) box.innerHTML = '';
+      box.innerHTML += renderMsg({ role: 'user', text });
+      box.innerHTML += `<div class="msg msg-ai" id="typingMsg"><div class="typing"><span></span><span></span><span></span></div></div>`;
+      box.scrollTop = box.scrollHeight;
+
+      setTimeout(() => {
+        const ans = matchAnswer(selectedPdfId, text);
+        const aiMsg = {
+          role: 'ai',
+          text: ans.text,
+          page: ans.page,
+          section: ans.section,
+          thinking: ans.thinking
+        };
+        chatHistory[selectedPdfId].push(aiMsg);
+        const typing = document.getElementById('typingMsg');
+        if (typing) typing.outerHTML = renderMsg(aiMsg);
+        box.scrollTop = box.scrollHeight;
+        // bump stat
+        const st = document.getElementById('stat-qa');
+        st.textContent = String(Number(st.textContent) + 1);
+      }, 900 + Math.random() * 600);
+    }
+
+    document.getElementById('sendBtn').addEventListener('click', sendMessage);
+    document.getElementById('chatInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // ========== Summary ==========
+    document.getElementById('summaryPdfSelect').addEventListener('change', e => {
+      renderSummary(e.target.value);
+    });
+
+    function renderSummary(id) {
+      const data = summaryData[id] || summaryData.p1;
+      document.getElementById('kpList').innerHTML = data.kps.map(k =>
+        `<div class="kp-item"><strong>${k.title}</strong><br>${k.desc}</div>`
+      ).join('');
+      document.getElementById('mistakeList').innerHTML = data.mistakes.map(m => `<li>${m}</li>`).join('');
+      document.getElementById('practiceList').innerHTML = data.practice.map(m => `<li>${m}</li>`).join('');
+    }
+
+    // ========== Admin ==========
+    function approveReview(id) {
+      const idx = pendingReviews.findIndex(r => r.id === id);
+      if (idx >= 0) {
+        const r = pendingReviews.splice(idx, 1)[0];
+        samplePdfs.push({
+          id: 'p' + Date.now(),
+          name: r.name,
+          subject: r.subject,
+          grade: r.grade,
+          pages: 15,
+          perm: 'public',
+          size: '1.5 MB',
+          uploaded: new Date().toISOString().slice(0, 10)
+        });
+        renderAllLists();
+        toast('已通过审核，资源变为平台公开');
+      }
+    }
+    function rejectReview(id) {
+      const idx = pendingReviews.findIndex(r => r.id === id);
+      if (idx >= 0) {
+        pendingReviews.splice(idx, 1);
+        renderAllLists();
+        toast('已驳回');
+      }
+    }
+
+    // Init
+    renderAllLists();
+  </script>
+</body>
+</html>
