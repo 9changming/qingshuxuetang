@@ -1,0 +1,2262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="智读 · PDF 智能学习平台。覆盖幼儿园至大学真实开放教材与官方资源，一键跳转原站，智能问答助学。" />
+  <meta name="keywords" content="智读,PDF学习,智能学习,开放教材,国家中小学智慧教育平台,OpenStax,MIT OCW" />
+  <meta name="theme-color" content="#1A4D3A" />
+  <meta property="og:title" content="智读 · PDF 智能学习平台" />
+  <meta property="og:description" content="真实开放教材与官方资源 · 一键跳转原站 · 智能问答助学" />
+  <meta property="og:type" content="website" />
+  <title>智读 · PDF 智能学习平台</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231A4D3A'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-size='16' font-family='system-ui' font-weight='700'%3E智%3C/text%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --bg: #F5F4F1; --bg-card: #fff; --primary: #1A4D3A; --primary-hover: #246B4F;
+      --primary-soft: #E6F0EB; --text: #141C18; --text-secondary: #3D4A43; --text-muted: #6B7870;
+      --border: #E2DED6; --border-light: #EEEBE5; --danger: #A63D30; --danger-soft: #F8EBE9;
+      --success: #1A6B4A; --warning: #B8860B; --warning-soft: #FBF3E0;
+      --radius: 12px; --shadow-sm: 0 1px 3px rgba(20,28,24,0.04); --shadow: 0 2px 10px rgba(20,28,24,0.06);
+      --shadow-md: 0 8px 28px rgba(20,28,24,0.1);
+      --font: "PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      --sidebar-w: 220px; --topbar-h: 54px;
+    }
+    [data-theme="dark"] {
+      --bg: #121816; --bg-card: #1C2420; --primary: #4ADE80; --primary-hover: #6EE7A0;
+      --primary-soft: #1A3D2E; --text: #E8EDE9; --text-secondary: #B0BAB4; --text-muted: #7A8880;
+      --border: #2A3530; --border-light: #24302A; --danger: #F87171; --danger-soft: #3D2020;
+      --success: #4ADE80; --warning: #FBBF24; --warning-soft: #3D3520;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.2); --shadow: 0 2px 10px rgba(0,0,0,0.25);
+      --shadow-md: 0 8px 28px rgba(0,0,0,0.35);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh;
+      line-height: 1.55; -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--primary); }
+    button, input, textarea, select { font-family: inherit; color: inherit; }
+    :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* Login */
+    .login-page {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+      background: radial-gradient(ellipse at 20% 20%, var(--primary-soft) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, #f0ebe3 0%, transparent 45%), var(--bg);
+    }
+    [data-theme="dark"] .login-page {
+      background: radial-gradient(ellipse at 20% 20%, #1a3d2e 0%, transparent 50%), var(--bg);
+    }
+    .login-card {
+      background: var(--bg-card); border-radius: 16px; padding: 36px 32px; width: 100%; max-width: 400px;
+      box-shadow: var(--shadow-md); border: 1px solid var(--border);
+    }
+    .login-brand { text-align: center; margin-bottom: 28px; }
+    .login-brand .mark {
+      width: 48px; height: 48px; margin: 0 auto 12px; background: var(--primary); color: #fff;
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 700;
+    }
+    [data-theme="dark"] .login-brand .mark { color: #121816; }
+    .login-brand h1 { font-size: 22px; font-weight: 650; margin-bottom: 4px; }
+    .login-brand p { font-size: 13px; color: var(--text-muted); }
+    .role-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+    .role-tab {
+      padding: 12px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--bg-card);
+      cursor: pointer; text-align: center; transition: border-color 0.12s, background 0.12s;
+    }
+    .role-tab:hover { border-color: var(--text-muted); }
+    .role-tab.active { border-color: var(--primary); background: var(--primary-soft); }
+    .role-tab strong { display: block; font-size: 14px; margin-bottom: 2px; color: var(--text); }
+    .role-tab span { font-size: 11.5px; color: var(--text-muted); }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12.5px; font-weight: 500; color: var(--text-secondary); margin-bottom: 5px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+      font-size: 14px; outline: none; background: var(--bg); transition: border-color 0.12s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--primary); background: var(--bg-card);
+    }
+    .login-hint {
+      font-size: 12px; color: var(--text-muted); margin: 12px 0 18px; line-height: 1.5;
+      background: var(--bg); padding: 10px 12px; border-radius: 8px;
+    }
+    .login-hint code { background: var(--border); padding: 1px 5px; border-radius: 3px; font-size: 11.5px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 500;
+      cursor: pointer; border: none; transition: background 0.12s, color 0.12s, border-color 0.12s;
+    }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-primary { background: var(--primary); color: #fff; width: 100%; }
+    [data-theme="dark"] .btn-primary { color: #121816; }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+    .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+    .btn-ghost:hover:not(:disabled) { background: var(--bg); }
+    .btn-sm { padding: 5px 11px; font-size: 12.5px; }
+    .btn-secondary { background: var(--primary-soft); color: var(--primary); }
+    .btn-secondary:hover:not(:disabled) { filter: brightness(0.95); }
+    .btn-icon {
+      width: 34px; height: 34px; padding: 0; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--text-secondary); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn-icon:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+
+    /* App shell */
+    .app-shell { display: none; }
+    .app-shell.show { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: 100vh; }
+    @media (max-width: 900px) {
+      .app-shell.show { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .sidebar.mobile-open {
+        display: flex; position: fixed; inset: 0; z-index: 200; width: min(280px, 85vw);
+        box-shadow: var(--shadow-md);
+      }
+      .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(20,28,24,0.45); z-index: 199; }
+      .sidebar-backdrop.show { display: block; }
+    }
+    .sidebar {
+      background: #1A4D3A; color: #fff; padding: 20px 12px; display: flex; flex-direction: column; gap: 2px;
+    }
+    [data-theme="dark"] .sidebar { background: #0F1F18; }
+    .brand {
+      display: flex; align-items: center; gap: 10px; padding: 6px 12px 18px;
+      margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+    .brand-mark {
+      width: 30px; height: 30px; background: rgba(255,255,255,0.15); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700;
+    }
+    .brand-text h1 { font-size: 16px; font-weight: 650; }
+    .brand-text span { font-size: 11px; opacity: 0.65; }
+    .nav-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5;
+      padding: 10px 14px 6px; font-weight: 500;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px;
+      cursor: pointer; font-size: 13.5px; color: rgba(255,255,255,0.85); border: none; background: transparent;
+      width: 100%; text-align: left; font-weight: 450; transition: background 0.12s, color 0.12s;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .nav-item.active { background: rgba(255,255,255,0.14); color: #fff; font-weight: 550; }
+    .nav-item svg { width: 17px; height: 17px; flex-shrink: 0; opacity: 0.85; }
+    .nav-item .nav-badge {
+      margin-left: auto; background: rgba(255,255,255,0.2); font-size: 10px; padding: 1px 6px;
+      border-radius: 10px; min-width: 18px; text-align: center;
+    }
+    .nav-item.admin-only { display: none; }
+    .sidebar-footer {
+      margin-top: auto; padding: 14px 12px 6px; border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 11.5px; opacity: 0.55; line-height: 1.5;
+    }
+
+    .main { display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; }
+    .topbar {
+      background: var(--bg-card); border-bottom: 1px solid var(--border);
+      padding: 0 24px; display: flex; align-items: center; justify-content: space-between;
+      min-height: var(--topbar-h); gap: 12px; flex-shrink: 0;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+    .menu-btn {
+      display: none; background: none; border: 1px solid var(--border); border-radius: 7px;
+      padding: 6px 8px; cursor: pointer; color: var(--text);
+    }
+    @media (max-width: 900px) { .menu-btn { display: flex; } }
+    .page-title { font-size: 15px; font-weight: 600; }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); flex-wrap: wrap;
+    }
+    .breadcrumb a { color: var(--primary); cursor: pointer; text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .topbar-search {
+      flex: 1; max-width: 320px; position: relative; display: none;
+    }
+    @media (min-width: 700px) { .topbar-search { display: block; } }
+    .topbar-search input {
+      width: 100%; border: 1px solid var(--border); border-radius: 20px; padding: 7px 14px 7px 34px;
+      font-size: 13px; outline: none; background: var(--bg);
+    }
+    .topbar-search input:focus { border-color: var(--primary); }
+    .topbar-search .search-icon {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      color: var(--text-muted); font-size: 13px; pointer-events: none;
+    }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; }
+    .user-chip {
+      display: flex; align-items: center; gap: 8px; background: var(--primary-soft);
+      color: var(--primary); padding: 4px 10px 4px 5px; border-radius: 20px; font-size: 13px; font-weight: 500;
+    }
+    .user-avatar {
+      width: 24px; height: 24px; background: var(--primary); color: #fff; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600;
+    }
+    [data-theme="dark"] .user-avatar { color: #121816; }
+    .role-badge { font-size: 11px; opacity: 0.8; margin-left: 2px; }
+    .logout-btn {
+      margin-left: 4px; font-size: 12px; color: var(--text-muted); cursor: pointer;
+      border: none; background: none; padding: 4px 6px; border-radius: 4px;
+    }
+    .logout-btn:hover { color: var(--danger); background: var(--danger-soft); }
+    .content { flex: 1; overflow-y: auto; padding: 24px 28px 36px; }
+    @media (max-width: 640px) { .content { padding: 16px 14px 28px; } .topbar { padding: 0 14px; } }
+
+    .badge { display: inline-flex; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+    .badge-private { background: #F3EDE4; color: #7A6240; }
+    .badge-class { background: #E8F0F7; color: #2E5A7A; }
+    .badge-public { background: var(--primary-soft); color: var(--primary); }
+    .badge-review { background: var(--danger-soft); color: var(--danger); }
+    .badge-open { background: #E8F5E9; color: #2E7D32; }
+    [data-theme="dark"] .badge-private { background: #3D3520; color: #E8D5A3; }
+    [data-theme="dark"] .badge-open { background: #1A3D2E; color: #4ADE80; }
+    [data-theme="dark"] .badge-class { background: #1A2A3D; color: #7EB8E0; }
+
+    .view { display: none; }
+    .view.active { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    /* Home */
+    .home-hero { text-align: center; margin-bottom: 24px; padding-top: 4px; }
+    .home-hero h2 { font-size: 24px; font-weight: 650; margin-bottom: 8px; }
+    .home-hero p { font-size: 14px; color: var(--text-muted); max-width: 480px; margin: 0 auto; }
+    .quick-row {
+      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 24px;
+    }
+    .quick-chip {
+      padding: 8px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px;
+      font-size: 13px; cursor: pointer; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px;
+      transition: border-color 0.12s, color 0.12s, background 0.12s;
+    }
+    .quick-chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+    .stage-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 28px; }
+    @media (max-width: 1100px) { .stage-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 640px) { .stage-grid { grid-template-columns: 1fr 1fr; } }
+    .stage-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 22px 16px; text-align: center; cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; box-shadow: var(--shadow-sm);
+    }
+    .stage-card:hover { border-color: var(--primary); box-shadow: var(--shadow); transform: translateY(-3px); }
+    .stage-card:active { transform: scale(0.98); }
+    .stage-icon {
+      width: 48px; height: 48px; margin: 0 auto 12px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+    }
+    .stage-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .stage-card p { font-size: 12px; color: var(--text-muted); }
+    .stage-count { margin-top: 10px; font-size: 12px; color: var(--primary); font-weight: 500; }
+    .home-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+    @media (max-width: 700px) { .home-stats { grid-template-columns: repeat(2, 1fr); } }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; box-shadow: var(--shadow-sm);
+    }
+    .stat-value { font-size: 22px; font-weight: 650; color: var(--primary); }
+    .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .section-block { margin-bottom: 28px; }
+    .section-block h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .card-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+    .mini-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 14px; cursor: pointer; transition: border-color 0.12s, background 0.12s;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .mini-card:hover { border-color: var(--primary); background: var(--primary-soft); }
+    .mini-card .mc-icon { font-size: 18px; flex-shrink: 0; }
+    .mini-card .mc-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+    .mini-card .mc-meta { font-size: 11px; color: var(--text-muted); }
+
+    /* Stage */
+    .stage-layout {
+      display: grid; grid-template-columns: 1fr 300px; gap: 18px;
+      height: calc(100vh - 110px); min-height: 480px;
+    }
+    @media (max-width: 960px) {
+      .stage-layout { grid-template-columns: 1fr; height: auto; }
+      .assistant-panel { min-height: 420px; }
+    }
+    .assistant-panel {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-sm); min-height: 0;
+    }
+    .assistant-header {
+      padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--bg);
+      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    }
+    .assistant-avatar {
+      width: 36px; height: 36px; border-radius: 10px; background: var(--primary); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700;
+    }
+    [data-theme="dark"] .assistant-avatar { color: #121816; }
+    .assistant-header h3 { font-size: 14px; font-weight: 600; }
+    .assistant-header p { font-size: 12px; color: var(--text-muted); }
+    .assistant-header-actions { margin-left: auto; display: flex; gap: 6px; }
+    .assistant-model {
+      max-width: 190px; border: 1px solid var(--border); border-radius: 7px; padding: 5px 8px;
+      background: var(--bg-card); font-size: 12px;
+    }
+    .assistant-model:disabled { color: var(--text-muted); }
+    .note-citation-controls {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .note-citation-controls select {
+      min-width: 180px; flex: 1; border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 10px; background: var(--bg); font-size: 13px;
+    }
+    .note-reference-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .note-reference-chip {
+      display: inline-flex; align-items: center; gap: 5px; background: var(--primary-soft);
+      color: var(--primary); border-radius: 16px; padding: 4px 9px; font-size: 11.5px;
+    }
+    .assistant-messages {
+      flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column;
+      gap: 12px; background: var(--bg); min-height: 220px;
+    }
+    .msg { max-width: 88%; padding: 11px 14px; border-radius: 12px; font-size: 13.5px; line-height: 1.65; }
+    .msg-user { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
+    [data-theme="dark"] .msg-user { color: #121816; }
+    .msg-ai {
+      align-self: flex-start; background: var(--bg-card); border: 1px solid var(--border);
+      border-bottom-left-radius: 4px; box-shadow: var(--shadow-sm);
+    }
+    .msg-ai .citation {
+      margin-top: 8px; padding: 6px 10px; background: var(--primary-soft); border-radius: 6px;
+      font-size: 12px; color: var(--primary);
+    }
+    .msg-ai .citation a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    .msg-ai .citation a:hover { text-decoration: underline; }
+    .msg-ai .thinking { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .welcome-block { text-align: center; padding: 24px 12px 8px; color: var(--text-muted); }
+    .welcome-block .w-icon {
+      width: 44px; height: 44px; margin: 0 auto 10px; background: var(--primary-soft);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;
+    }
+    .welcome-block h4 { font-size: 15px; color: var(--text); font-weight: 600; margin-bottom: 6px; }
+    .welcome-block p { font-size: 13px; max-width: 320px; margin: 0 auto 14px; }
+    .suggest-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .suggest-chip {
+      padding: 6px 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px;
+      font-size: 12.5px; cursor: pointer; color: var(--text-secondary);
+    }
+    .suggest-chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+    .assistant-input-area {
+      padding: 12px; border-top: 1px solid var(--border); display: flex; gap: 10px;
+      align-items: flex-end; background: var(--bg-card); flex-shrink: 0;
+    }
+    .assistant-input {
+      flex: 1; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+      font-size: 13.5px; resize: none; min-height: 42px; max-height: 90px; outline: none;
+      background: var(--bg); line-height: 1.4;
+    }
+    .assistant-input:focus { border-color: var(--primary); background: var(--bg-card); }
+    .typing { display: flex; gap: 4px; padding: 4px 0; }
+    .typing span {
+      width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+    .typing span:nth-child(2) { animation-delay: 0.15s; }
+    .typing span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    .stage-side { display: flex; flex-direction: column; gap: 12px; overflow: hidden; min-height: 0; }
+    .side-block {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      box-shadow: var(--shadow-sm); overflow: hidden; display: flex; flex-direction: column;
+    }
+    .side-block-header {
+      padding: 10px 14px; border-bottom: 1px solid var(--border-light); font-size: 12px;
+      font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;
+      display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+    }
+    .subject-list { padding: 8px; display: flex; flex-wrap: wrap; gap: 6px; max-height: 120px; overflow-y: auto; }
+    .subject-tag {
+      padding: 4px 10px; border-radius: 14px; font-size: 12px; cursor: pointer;
+      border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary);
+    }
+    .subject-tag:hover, .subject-tag.active {
+      border-color: var(--primary); background: var(--primary-soft); color: var(--primary); font-weight: 500;
+    }
+    .material-list { padding: 6px 8px 10px; overflow-y: auto; flex: 1; max-height: 340px; }
+    @media (max-width: 960px) { .material-list { max-height: 280px; } }
+    .material-item {
+      padding: 9px 10px; border-radius: 8px; display: flex; gap: 10px; align-items: flex-start;
+      transition: background 0.12s;
+    }
+    .material-item:hover { background: var(--bg); }
+    .material-item.active { background: var(--primary-soft); }
+    .mi-icon {
+      width: 30px; height: 30px; background: var(--bg); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0;
+    }
+    .mi-name { font-size: 12.5px; font-weight: 500; margin-bottom: 2px; word-break: break-word; }
+    .mi-meta { font-size: 11px; color: var(--text-muted); display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+    .mi-actions { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+    .mi-actions button {
+      font-size: 11px; padding: 2px 7px; border-radius: 4px; border: 1px solid var(--border);
+      background: var(--bg-card); cursor: pointer; color: var(--text-secondary);
+    }
+    .mi-actions button:hover { border-color: var(--primary); color: var(--primary); }
+    .mi-actions button.starred { color: var(--warning); border-color: var(--warning); }
+    .list-filter { padding: 0 8px 6px; }
+    .list-filter input {
+      width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px;
+      font-size: 12.5px; outline: none; background: var(--bg);
+    }
+    .list-filter input:focus { border-color: var(--primary); }
+
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+    .section-title { font-size: 15px; font-weight: 600; }
+    .upload-zone {
+      border: 1.5px dashed var(--border); border-radius: 14px; padding: 32px 20px; text-align: center;
+      background: var(--bg-card); cursor: pointer; transition: border-color 0.15s, background 0.15s;
+      margin-bottom: 20px;
+    }
+    .upload-zone:hover, .upload-zone.dragover { border-color: var(--primary); background: var(--primary-soft); }
+    .upload-zone input { display: none; }
+    .upload-form {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px; max-width: 520px;
+    }
+    .upload-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 500px) { .upload-form .form-row { grid-template-columns: 1fr; } }
+    .table-wrap { overflow-x: auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--border-light); }
+    th { background: var(--bg); font-weight: 550; color: var(--text-muted); font-size: 11.5px; text-transform: uppercase; white-space: nowrap; }
+    tr:last-child td { border-bottom: none; }
+    td .btn { width: auto; }
+
+    /* Notes */
+    .notes-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; min-height: 400px; }
+    @media (max-width: 700px) { .notes-layout { grid-template-columns: 1fr; } }
+    .notes-list {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; display: flex; flex-direction: column;
+    }
+    .notes-list-header {
+      padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .note-item {
+      padding: 12px 14px; border-bottom: 1px solid var(--border-light); cursor: pointer;
+      transition: background 0.12s;
+    }
+    .note-item:hover, .note-item.active { background: var(--primary-soft); }
+    .note-item .ni-title { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+    .note-item .ni-meta { font-size: 11px; color: var(--text-muted); }
+    .note-editor {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .note-editor input {
+      border: none; border-bottom: 1px solid var(--border); padding: 8px 0; font-size: 16px;
+      font-weight: 600; outline: none; background: transparent;
+    }
+    .note-editor textarea {
+      flex: 1; min-height: 280px; border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px; font-size: 14px; outline: none; resize: vertical; background: var(--bg); line-height: 1.7;
+    }
+    .note-editor textarea:focus { border-color: var(--primary); }
+
+    /* Search results */
+    .search-results { max-width: 720px; }
+    .search-hit {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.12s;
+    }
+    .search-hit:hover { border-color: var(--primary); }
+    .search-hit h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .search-hit .sh-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* About */
+    .about-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 28px; max-width: 640px; box-shadow: var(--shadow-sm);
+    }
+    .about-card h3 { font-size: 18px; margin-bottom: 12px; }
+    .about-card p { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.7; }
+    .about-card ul { margin: 12px 0 12px 20px; font-size: 14px; color: var(--text-secondary); }
+    .about-card li { margin-bottom: 6px; }
+    .kbd {
+      display: inline-block; padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px;
+      font-size: 11px; background: var(--bg); font-family: ui-monospace, monospace;
+    }
+
+    /* Reader */
+    .reader-overlay {
+      display: none; position: fixed; inset: 0; z-index: 250;
+      background: rgba(20,28,24,0.45); align-items: center; justify-content: center; padding: 20px;
+    }
+    .reader-overlay.show { display: flex; }
+    .reader {
+      background: #FBF9F5; border-radius: 16px; width: 100%; max-width: 800px; max-height: 90vh;
+      display: flex; flex-direction: column; box-shadow: var(--shadow-md); overflow: hidden;
+    }
+    [data-theme="dark"] .reader { background: #1A221E; }
+    .reader-toolbar {
+      display: flex; align-items: center; justify-content: space-between; padding: 12px 18px;
+      background: var(--bg-card); border-bottom: 1px solid var(--border); gap: 12px; flex-shrink: 0;
+    }
+    .reader-toolbar h3 {
+      font-size: 14px; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .reader-page {
+      flex: 1; padding: 32px 40px; overflow-y: auto; font-size: 15px; line-height: 1.85;
+      color: #2a322e; background: linear-gradient(90deg, #f0ebe3 0px, transparent 12px), #FBF9F5;
+      min-height: 320px;
+    }
+    [data-theme="dark"] .reader-page {
+      color: var(--text); background: linear-gradient(90deg, #24302A 0px, transparent 12px), #1A221E;
+    }
+    @media (max-width: 640px) { .reader-page { padding: 20px 18px; } }
+    .reader-page h4 { font-size: 17px; font-weight: 650; margin-bottom: 14px; color: var(--primary); }
+    .reader-nav {
+      display: flex; align-items: center; justify-content: center; gap: 16px; padding: 12px;
+      background: var(--bg-card); border-top: 1px solid var(--border); flex-shrink: 0;
+    }
+    .flip-btn {
+      width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border);
+      background: var(--bg-card); cursor: pointer; font-size: 18px; color: var(--text-secondary);
+    }
+    .flip-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+    .flip-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* Global search modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 300; background: rgba(20,28,24,0.4);
+      align-items: flex-start; justify-content: center; padding: 12vh 20px 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+      background: var(--bg-card); border-radius: 14px; width: 100%; max-width: 560px;
+      box-shadow: var(--shadow-md); border: 1px solid var(--border); overflow: hidden;
+    }
+    .modal-search-input {
+      width: 100%; border: none; border-bottom: 1px solid var(--border); padding: 16px 18px;
+      font-size: 16px; outline: none; background: transparent;
+    }
+    .modal-results { max-height: 360px; overflow-y: auto; padding: 8px; }
+    .modal-result-item {
+      padding: 10px 12px; border-radius: 8px; cursor: pointer; display: flex; gap: 10px; align-items: flex-start;
+    }
+    .modal-result-item:hover { background: var(--primary-soft); }
+    .modal-result-item .mri-name { font-size: 13.5px; font-weight: 500; }
+    .modal-result-item .mri-meta { font-size: 11.5px; color: var(--text-muted); }
+    .modal-empty { padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+    .toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--text); color: var(--bg); padding: 11px 20px; border-radius: 8px;
+      font-size: 13.5px; opacity: 0; transition: opacity 0.25s, transform 0.25s;
+      z-index: 400; pointer-events: none; max-width: min(90vw, 360px); text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .admin-only-block { display: none; }
+    .empty-state { padding: 28px 16px; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+    .reader-page::-webkit-scrollbar, .assistant-messages::-webkit-scrollbar,
+    .material-list::-webkit-scrollbar, .subject-list::-webkit-scrollbar,
+    .modal-results::-webkit-scrollbar { width: 6px; }
+    .reader-page::-webkit-scrollbar-thumb, .assistant-messages::-webkit-scrollbar-thumb,
+    .material-list::-webkit-scrollbar-thumb, .subject-list::-webkit-scrollbar-thumb,
+    .modal-results::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="login-page" id="loginPage" role="main">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="mark" aria-hidden="true">智</div>
+        <h1>智读</h1>
+        <p>PDF 智能学习平台</p>
+      </div>
+      <div class="role-tabs" role="tablist" aria-label="登录身份">
+        <button type="button" class="role-tab active" data-role="visitor" id="tabVisitor" role="tab" aria-selected="true">
+          <strong>访客</strong><span>浏览学习 · 提问</span>
+        </button>
+        <button type="button" class="role-tab" data-role="admin" id="tabAdmin" role="tab" aria-selected="false">
+          <strong>管理者</strong><span>审核 · 管理资源</span>
+        </button>
+      </div>
+      <div class="form-group">
+        <label for="loginUser">用户名</label>
+        <input type="text" id="loginUser" placeholder="请输入昵称或用户名" autocomplete="username" maxlength="32" />
+      </div>
+      <div class="form-group" id="pwdGroup" style="display:none;" hidden>
+        <label for="loginPwd">密码</label>
+        <input type="password" id="loginPwd" placeholder="管理者密码" autocomplete="current-password" />
+      </div>
+      <div class="login-hint" id="loginHint">
+        访客输入昵称即可进入，无需密码。<br />
+        管理者请使用已分配的账号与密码登录。
+      </div>
+      <button type="button" class="btn btn-primary" id="loginBtn">进入平台</button>
+    </div>
+  </div>
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar" id="sidebar" aria-label="主导航">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">智</div>
+        <div class="brand-text"><h1>智读</h1><span>PDF 智能学习平台</span></div>
+      </div>
+      <div class="nav-label">学习</div>
+      <button type="button" class="nav-item active" data-view="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+        学段首页
+      </button>
+      <button type="button" class="nav-item" data-view="favorites">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        我的收藏
+        <span class="nav-badge" id="favBadge" style="display:none">0</span>
+      </button>
+      <button type="button" class="nav-item" data-view="notes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+        学习笔记
+      </button>
+      <button type="button" class="nav-item" data-view="mine">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        我的资料
+      </button>
+      <div class="nav-label">资源</div>
+      <button type="button" class="nav-item" data-view="upload">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 16V4m0 0l-4 4m4-4l4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+        上传资料
+      </button>
+      <button type="button" class="nav-item admin-only" data-view="admin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        资源审核
+        <span class="nav-badge" id="reviewBadge" style="display:none">0</span>
+      </button>
+      <div class="nav-label">其他</div>
+      <button type="button" class="nav-item" data-view="about">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        关于与帮助
+      </button>
+      <div class="sidebar-footer">智读 · 真实开放教材<br />资料跳转官方 / OER 原站</div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="menu-btn" id="menuBtn" aria-label="打开菜单">☰</button>
+          <nav class="breadcrumb" id="breadcrumb" aria-label="面包屑">
+            <span class="page-title">学段首页</span>
+          </nav>
+          <div class="topbar-search">
+            <span class="search-icon" aria-hidden="true">🔍</span>
+            <input type="search" id="topSearch" placeholder="搜索资料… 或按 /" autocomplete="off" />
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button type="button" class="btn-icon" id="themeBtn" title="切换深色模式" aria-label="切换主题">◐</button>
+          <button type="button" class="btn-icon" id="globalSearchBtn" title="全局搜索 (Ctrl+K)" aria-label="全局搜索">⌕</button>
+          <div class="user-chip">
+            <div class="user-avatar" id="userAvatar" aria-hidden="true">访</div>
+            <span id="userName">访客</span>
+            <span class="role-badge" id="userRoleLabel">· 访客</span>
+          </div>
+          <button type="button" class="logout-btn" id="logoutBtn">退出</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <!-- Home -->
+        <div class="view active" id="view-home">
+          <div class="home-hero">
+            <h2>选择学段，开始学习</h2>
+            <p>真实开放教材与官方资源 · 一键跳转原站 · 智能问答 · 收藏与笔记</p>
+          </div>
+          <div class="quick-row">
+            <button type="button" class="quick-chip" data-quick="favorites">★ 我的收藏</button>
+            <button type="button" class="quick-chip" data-quick="notes">✎ 学习笔记</button>
+            <button type="button" class="quick-chip" data-quick="search">⌕ 全局搜索</button>
+            <button type="button" class="quick-chip" data-quick="upload">↑ 上传资料</button>
+          </div>
+          <div class="stage-grid" id="stageGrid" role="list"></div>
+          <div class="home-stats" aria-label="平台数据概览">
+            <div class="stat-card"><div class="stat-value" id="stat-pdfs">0</div><div class="stat-label">资料总数</div></div>
+            <div class="stat-card"><div class="stat-value" id="stat-qa">0</div><div class="stat-label">本次提问</div></div>
+            <div class="stat-card"><div class="stat-value" id="stat-fav">0</div><div class="stat-label">收藏</div></div>
+            <div class="stat-card"><div class="stat-value" id="stat-review">0</div><div class="stat-label">待审核</div></div>
+          </div>
+          <div class="section-block" id="recentSection" style="display:none">
+            <h3>最近浏览</h3>
+            <div class="card-list" id="recentList"></div>
+          </div>
+        </div>
+
+        <!-- Stage -->
+        <div class="view" id="view-stage">
+          <div class="stage-layout">
+            <section class="assistant-panel" aria-label="学习助手">
+              <div class="assistant-header">
+                <div class="assistant-avatar" id="asstAvatar" aria-hidden="true">智</div>
+                <div>
+                  <h3 id="asstTitle">学习助手</h3>
+                  <p id="asstSub">提问或从右侧翻阅资料</p>
+                </div>
+                <div class="assistant-header-actions">
+                  <label class="sr-only" for="asstModel">本机 Ollama 模型</label>
+                  <select id="asstModel" class="assistant-model" aria-label="本机 Ollama 模型" disabled>
+                    <option>正在连接 Ollama…</option>
+                  </select>
+                  <button type="button" class="btn btn-sm btn-secondary" id="summarizeBtn" title="总结已选资料">总结资料</button>
+                  <button type="button" class="btn btn-sm btn-ghost" id="clearChatBtn" title="清空对话">清空</button>
+                </div>
+              </div>
+              <div class="assistant-messages" id="asstMessages" role="log" aria-live="polite"></div>
+              <div class="assistant-input-area">
+                <label class="sr-only" for="asstInput">向助手提问</label>
+                <textarea class="assistant-input" id="asstInput" rows="1" placeholder="有什么想问的？直接说即可" maxlength="2000"></textarea>
+                <button type="button" class="btn btn-primary" id="asstSend" style="width:auto;padding:10px 16px;">发送</button>
+              </div>
+            </section>
+            <aside class="stage-side" aria-label="学科与资料">
+              <div class="side-block">
+                <div class="side-block-header">学科</div>
+                <div class="subject-list" id="subjectList" role="list"></div>
+              </div>
+              <div class="side-block" style="flex:1;min-height:0;">
+                <div class="side-block-header">
+                  <span>资料列表</span>
+                  <span id="matCount" style="font-weight:400;text-transform:none;"></span>
+                </div>
+                <div class="list-filter">
+                  <label class="sr-only" for="matSearch">搜索资料</label>
+                  <input type="search" id="matSearch" placeholder="搜索资料名称…" autocomplete="off" />
+                </div>
+                <div class="material-list" id="materialList"></div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- Favorites -->
+        <div class="view" id="view-favorites">
+          <div class="section-header">
+            <span class="section-title">我的收藏</span>
+            <span style="font-size:12.5px;color:var(--text-muted);" id="favCountLabel">0 份</span>
+          </div>
+          <div class="card-list" id="favList"></div>
+        </div>
+
+        <!-- Notes -->
+        <div class="view" id="view-notes">
+          <div class="section-header">
+            <span class="section-title">学习笔记</span>
+            <button type="button" class="btn btn-sm btn-primary" id="newNoteBtn" style="width:auto;">新建笔记</button>
+          </div>
+          <div class="notes-layout">
+            <div class="notes-list">
+              <div class="notes-list-header"><span>全部笔记</span><span id="notesCount" style="font-weight:400;color:var(--text-muted);font-size:12px;">0</span></div>
+              <div id="notesListBody" style="overflow-y:auto;flex:1;max-height:480px;"></div>
+            </div>
+            <div class="note-editor" id="noteEditor">
+              <input type="text" id="noteTitle" placeholder="笔记标题" maxlength="80" />
+              <textarea id="noteBody" placeholder="在这里记录要点、公式、疑问…"></textarea>
+              <div class="note-citation-controls">
+                <label class="sr-only" for="noteMaterialSelect">选择要引用的学习资料</label>
+                <select id="noteMaterialSelect"><option value="">选择平台学习资料</option></select>
+                <button type="button" class="btn btn-sm btn-secondary" id="insertNoteCitationBtn">插入引用</button>
+              </div>
+              <div class="note-reference-list" id="noteReferenceList"></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button type="button" class="btn btn-primary" id="saveNoteBtn" style="width:auto;">保存</button>
+                <button type="button" class="btn btn-ghost" id="deleteNoteBtn" style="width:auto;">删除</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mine -->
+        <div class="view" id="view-mine">
+          <div class="section-header">
+            <span class="section-title">我的资料</span>
+            <button type="button" class="btn btn-sm btn-secondary" data-goto="upload" style="width:auto;">去上传</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>文件名</th><th>学段</th><th>学科</th><th>状态</th><th>大小</th><th>操作</th></tr></thead>
+              <tbody id="mineTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Upload -->
+        <div class="view" id="view-upload">
+          <div class="section-header"><span class="section-title">上传学习资料</span></div>
+          <div class="upload-zone" id="uploadZone" role="button" tabindex="0" aria-label="上传 PDF 文件">
+            <input type="file" id="fileInput" accept=".pdf,application/pdf" />
+            <div style="font-size:28px;margin-bottom:8px;" aria-hidden="true">📄</div>
+            <h3 style="font-size:15px;margin-bottom:6px;">拖拽或点击选择 PDF</h3>
+            <p style="font-size:13px;color:var(--text-muted);">选择文件后填写学段与学科信息</p>
+          </div>
+          <div class="upload-form" id="uploadForm" style="display:none;">
+            <div class="form-group">
+              <label>已选文件</label>
+              <div id="uploadFileName" style="font-size:14px;font-weight:500;"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="upStage">学段</label>
+                <select id="upStage"></select>
+              </div>
+              <div class="form-group">
+                <label for="upGrade">年级</label>
+                <select id="upGrade"></select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="upSubject">学科</label>
+              <select id="upSubject"></select>
+            </div>
+            <div class="form-group">
+              <label for="upCategory">主题分类（可新增）</label>
+              <input type="text" id="upCategory" maxlength="40" placeholder="如：考研数学、Python 编程、教师资格备考" />
+              <button type="button" class="btn btn-sm btn-secondary" id="classifyUploadBtn" style="margin-top:8px;">根据文件内容识别分类</button>
+              <span id="classifyUploadStatus" style="font-size:12px;color:var(--text-muted);margin-left:8px;"></span>
+            </div>
+            <div class="form-group">
+              <label for="upPerm">可见范围</label>
+              <select id="upPerm">
+                <option value="private">仅自己（私有）</option>
+                <option value="review">申请公开（需审核）</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button type="button" class="btn btn-primary" id="confirmUploadBtn" style="width:auto;">确认上传</button>
+              <button type="button" class="btn btn-ghost" id="cancelUploadBtn" style="width:auto;">取消</button>
+            </div>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:12px;">PDF 文件会保存在平台本机；申请公开的资料需经管理者审核后展示。</p>
+          </div>
+        </div>
+
+        <!-- Admin -->
+        <div class="view admin-only-block" id="view-admin">
+          <div class="section-header">
+            <span class="section-title">共享资源审核</span>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:12.5px;color:var(--text-muted);">仅管理者可见</span>
+              <button type="button" class="btn btn-sm btn-secondary" id="archivePublicPdfsBtn">归档可下载公开 PDF</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>文件名</th><th>上传者</th><th>学科 / 年级</th><th>状态</th><th>操作</th></tr></thead>
+              <tbody id="adminTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- About -->
+        <div class="view" id="view-about">
+          <div class="about-card">
+            <h3>关于智读</h3>
+            <p>智读是面向幼儿园至大学的 PDF 智能学习平台，聚合<strong>国家中小学智慧教育平台</strong>、<strong>OpenStax</strong>、<strong>MIT OCW</strong> 等真实开放教材与官方资源，支持跳转原站阅读，并提供本地智能问答、收藏与笔记。</p>
+            <h3 style="font-size:15px;margin-top:20px;">主要功能</h3>
+            <ul>
+              <li>五大学段资料浏览与学科筛选</li>
+              <li>学习助手问答（连接本机 Ollama 模型）</li>
+              <li>管理者可将来源明确的公开 PDF 存档到平台</li>
+              <li>收藏、最近浏览、全局搜索</li>
+              <li>学习笔记（云端同步）</li>
+              <li>上传资料与管理者审核</li>
+              <li>深色模式</li>
+            </ul>
+            <h3 style="font-size:15px;margin-top:20px;">快捷键</h3>
+            <ul>
+              <li><span class="kbd">/</span> 或 <span class="kbd">Ctrl</span>+<span class="kbd">K</span> 打开全局搜索</li>
+              <li><span class="kbd">Esc</span> 关闭弹层</li>
+              <li>阅读器内 <span class="kbd">←</span> <span class="kbd">→</span> 翻页</li>
+            </ul>
+            <h3 style="font-size:15px;margin-top:20px;">账号说明</h3>
+            <p>访客输入昵称即可使用；管理者由系统分配账号密码。数据通过后端安全存储。</p>
+            <p style="margin-top:16px;font-size:12px;color:var(--text-muted);">智读 · 真实开放教材与官方资源</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reader -->
+  <div class="reader-overlay" id="readerOverlay" role="dialog" aria-modal="true" aria-labelledby="readerTitle">
+    <div class="reader">
+      <div class="reader-toolbar">
+        <h3 id="readerTitle">资料阅读</h3>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button type="button" class="btn btn-sm btn-ghost" id="readerStarBtn">收藏</button>
+          <button type="button" class="btn btn-sm btn-secondary" id="readerAskBtn">问助手</button>
+          <button type="button" class="btn btn-sm btn-ghost" id="readerCloseBtn">关闭</button>
+        </div>
+      </div>
+      <div class="reader-page" id="readerPage" tabindex="0"></div>
+      <div class="reader-nav">
+        <button type="button" class="flip-btn" id="readerPrev" aria-label="上一页">‹</button>
+        <span id="readerPageInfo" style="font-size:13px;color:var(--text-muted);min-width:70px;text-align:center;">1 / 1</span>
+        <button type="button" class="flip-btn" id="readerNext" aria-label="下一页">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global search modal -->
+  <div class="modal-overlay" id="searchModal" role="dialog" aria-modal="true" aria-label="全局搜索">
+    <div class="modal-box">
+      <input type="search" class="modal-search-input" id="modalSearchInput" placeholder="搜索资料名称、学科、来源…" autocomplete="off" />
+      <div class="modal-results" id="modalResults"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  const STAGES = [
+    { id:'kindergarten', name:'幼儿园', icon:'🎨', color:'#F5E6D3', desc:'语言 · 数学 · 科学 · 艺术',
+      grades:['小班','中班','大班'],
+      subjects:['语言','拼音','数学启蒙','科学','社会','健康','体育','音乐','美术','游戏活动'] },
+    { id:'primary', name:'小学', icon:'📘', color:'#E3F0EA', desc:'语数英 · 科学 · 道法',
+      grades:['一年级','二年级','三年级','四年级','五年级','六年级'],
+      subjects:['语文','数学','英语','道德与法治','科学','体育与健康','音乐','美术','劳动','信息技术','综合实践活动'] },
+    { id:'junior', name:'初中', icon:'📗', color:'#E8EEF5', desc:'语数英 · 物化生 · 史地',
+      grades:['初一','初二','初三'],
+      subjects:['语文','数学','英语','道德与法治','历史','地理','物理','化学','生物','体育与健康','音乐','美术','劳动','信息技术','综合实践活动'] },
+    { id:'senior', name:'高中', icon:'📙', color:'#F3E8F0', desc:'语数英 · 物化生 · 史地政',
+      grades:['高一','高二','高三'],
+      subjects:['语文','数学','英语','思想政治','历史','地理','物理','化学','生物','体育与健康','音乐','美术','信息技术','通用技术','劳动'] },
+    { id:'university', name:'大学', icon:'🎓', color:'#EDE8F5', desc:'公共课 · 专业 · 论文',
+      grades:['大一','大二','大三','大四'],
+      subjects:['高等数学','线性代数','概率统计','大学物理','大学化学','大学英语','计算机基础','数据结构','程序设计','微观经济学','宏观经济学','管理学','中国近现代史纲要','马克思主义基本原理','思想道德与法治','文学','法学','教育学','心理学','有机化学','机械基础','电路基础','医学基础','统计学','科研方法','毕业论文','文献综述'] }
+  ];
+
+  const REAL_MATERIALS = [
+    { stage:'kindergarten', subject:'语言', grade:'大班', name:'学前教育开放获取研究（DOAJ）', url:'https://doi.org/10.1016/j.ijedro.2022.100147', source:'DOAJ', pages:0 },
+    { stage:'kindergarten', subject:'拼音', grade:'大班', name:'国家中小学智慧教育平台 · 学前资源入口', url:'https://basic.smartedu.cn/', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'kindergarten', subject:'数学启蒙', grade:'中班', name:'OpenStax Prealgebra 2e（数学启蒙参考）', url:'https://openstax.org/details/books/prealgebra-2e', source:'OpenStax', pages:0 },
+    { stage:'primary', subject:'语文', grade:'一年级', name:'统编版小学语文一年级（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台 · 教育部', pages:0 },
+    { stage:'primary', subject:'数学', grade:'一年级', name:'人教版小学数学一年级（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台 · 人教社', pages:0 },
+    { stage:'primary', subject:'英语', grade:'三年级', name:'人教 PEP 小学英语三年级（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'primary', subject:'数学', grade:'三年级', name:'OpenStax Elementary Algebra 2e（分数/代数预备）', url:'https://openstax.org/details/books/elementary-algebra-2e', source:'OpenStax', pages:0 },
+    { stage:'primary', subject:'科学', grade:'四年级', name:'国家中小学智慧教育平台 · 小学科学', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'primary', subject:'道德与法治', grade:'一年级', name:'统编版道德与法治（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'junior', subject:'数学', grade:'初一', name:'人教版七年级数学（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台 · 人教社', pages:0 },
+    { stage:'junior', subject:'数学', grade:'初二', name:'OpenStax Algebra 1（代数基础）', url:'https://openstax.org/details/books/algebra-1', source:'OpenStax', pages:0 },
+    { stage:'junior', subject:'物理', grade:'初二', name:'人教版八年级物理（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'junior', subject:'化学', grade:'初三', name:'人教版九年级化学（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'junior', subject:'英语', grade:'初一', name:'人教版七年级英语（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'junior', subject:'语文', grade:'初二', name:'统编版初中语文（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'junior', subject:'历史', grade:'初一', name:'统编版中国历史（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'junior', subject:'生物', grade:'初一', name:'人教版初中生物学（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'junior', subject:'数学', grade:'初三', name:'OpenStax Intermediate Algebra 2e', url:'https://openstax.org/details/books/intermediate-algebra-2e', source:'OpenStax', pages:0 },
+    { stage:'senior', subject:'语文', grade:'高一', name:'人教版高中语文必修上册（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台 · 人教社', pages:0 },
+    { stage:'senior', subject:'数学', grade:'高一', name:'人教版高中数学必修第一册（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'senior', subject:'数学', grade:'高二', name:'OpenStax Precalculus 2e（预微积分）', url:'https://openstax.org/details/books/precalculus-2e', source:'OpenStax', pages:0 },
+    { stage:'senior', subject:'物理', grade:'高一', name:'人教版高中物理必修第一册（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'senior', subject:'物理', grade:'高二', name:'OpenStax High School Physics（高中物理）', url:'https://openstax.org/details/books/physics', source:'OpenStax', pages:0 },
+    { stage:'senior', subject:'化学', grade:'高一', name:'人教版高中化学必修第一册（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'senior', subject:'化学', grade:'高二', name:'OpenStax Chemistry 2e（普通化学）', url:'https://openstax.org/details/books/chemistry-2e', source:'OpenStax', pages:0 },
+    { stage:'senior', subject:'生物', grade:'高一', name:'人教版高中生物学（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'senior', subject:'英语', grade:'高一', name:'人教版高中英语（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'senior', subject:'思想政治', grade:'高一', name:'统编版思想政治（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'senior', subject:'历史', grade:'高一', name:'统编版中外历史纲要（国家智慧教育平台）', url:'https://basic.smartedu.cn/tchMaterial', source:'国家中小学智慧教育平台', pages:0 },
+    { stage:'university', subject:'高等数学', grade:'大一', name:'MIT OCW · Gilbert Strang《Calculus》完整教材 PDF', url:'https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/resources/mitres_18_001_f17_full_book_pdf/', source:'MIT OpenCourseWare', pages:706 },
+    { stage:'university', subject:'高等数学', grade:'大一', name:'OpenStax Calculus Volume 1（极限·导数·积分）', url:'https://openstax.org/details/books/calculus-volume-1', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'高等数学', grade:'大二', name:'OpenStax Calculus Volume 2', url:'https://openstax.org/details/books/calculus-volume-2', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'高等数学', grade:'大二', name:'OpenStax Calculus Volume 3', url:'https://openstax.org/details/books/calculus-volume-3', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'线性代数', grade:'大一', name:'MIT OCW 18.06 Linear Algebra（Strang）', url:'https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/', source:'MIT OpenCourseWare', pages:0 },
+    { stage:'university', subject:'大学物理', grade:'大一', name:'OpenStax College Physics 2e', url:'https://openstax.org/details/books/college-physics-2e', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'大学物理', grade:'大一', name:'OpenStax University Physics Volume 1', url:'https://openstax.org/details/books/university-physics-volume-1', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'大学化学', grade:'大一', name:'OpenStax Chemistry 2e', url:'https://openstax.org/details/books/chemistry-2e', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'有机化学', grade:'大二', name:'OpenStax Organic Chemistry', url:'https://openstax.org/details/books/organic-chemistry', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'微观经济学', grade:'大一', name:'OpenStax Principles of Microeconomics 3e', url:'https://openstax.org/details/books/principles-microeconomics-3e', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'宏观经济学', grade:'大一', name:'OpenStax Principles of Macroeconomics 3e', url:'https://openstax.org/details/books/principles-macroeconomics-3e', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'概率统计', grade:'大二', name:'OpenStax Introductory Statistics 2e', url:'https://openstax.org/details/books/introductory-statistics-2e', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'数据结构', grade:'大二', name:'OpenStax Introduction to Computer Science', url:'https://openstax.org/details/books/introduction-computer-science', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'程序设计', grade:'大一', name:'OpenStax Introduction to Python Programming', url:'https://openstax.org/details/books/introduction-python-programming', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'大学英语', grade:'大一', name:'OpenStax Writing Guide with Handbook', url:'https://openstax.org/details/books/writing-guide', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'心理学', grade:'大一', name:'OpenStax Psychology 2e', url:'https://openstax.org/details/books/psychology-2e', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'科研方法', grade:'大三', name:'arXiv 预印本检索（论文与综述）', url:'https://arxiv.org/', source:'arXiv', pages:0 },
+    { stage:'university', subject:'毕业论文', grade:'大四', name:'OpenStax Writing Guide · 学术写作', url:'https://openstax.org/details/books/writing-guide', source:'OpenStax', pages:0 },
+    { stage:'university', subject:'文献综述', grade:'大三', name:'Google Scholar 学术检索', url:'https://scholar.google.com/', source:'Google Scholar', pages:0 },
+    { stage:'university', subject:'高等数学', grade:'大一', name:'MIT OCW Calculus 教材章节页', url:'https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/', source:'MIT OCW', pages:0 }
+  ];
+
+  function generateLibrary() {
+    return REAL_MATERIALS.map(function (o, i) {
+      return {
+        id: 'real' + i, name: o.name, subject: o.subject, grade: o.grade, stage: o.stage,
+        pages: o.pages || 0, perm: 'public', size: o.pages > 100 ? '约 ' + Math.round(o.pages * 0.08) + ' MB' : '—',
+        uploaded: '开放资源', external: true, url: o.url, source: o.source, owner: null
+      };
+    });
+  }
+
+  let samplePdfs = generateLibrary();
+  let pendingReviews = [];
+  let favIds = [];
+
+  let currentUser = null, currentStage = null, currentSubject = '全部', selectedPdfId = null, matQuery = '', currentCategory = null;
+  let stageChat = {}, qaCount = 0, readerState = { id:null, pages:[], idx:0 };
+  let loginRole = 'visitor', toastTimer = null;
+  let pendingFile = null, currentNoteId = null, noteReferences = [];
+  let assistantTurn = 0, assistantAbortController = null;
+
+  function lsGet(key, fallback) {
+    try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+  }
+  function lsSet(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+  }
+
+  function loadLibrary() {
+    return api('/api/materials?include_mine=1').then(function (data) {
+      if (data.items && data.items.length) {
+        samplePdfs = data.items.map(function (p) {
+          p.external = !!p.external;
+          p.owner = p.owner_name || null;
+          return p;
+        });
+      }
+      if (typeof renderHome === 'function') renderHome();
+      if (typeof renderNoteReferencePicker === 'function') renderNoteReferencePicker();
+      return api('/api/stats').then(function (s) {
+        if (s.stats) {
+          document.getElementById('stat-pdfs').textContent = s.stats.pdfs;
+          document.getElementById('stat-review').textContent = s.stats.review;
+          document.getElementById('stat-fav').textContent = s.stats.fav;
+        }
+      }).catch(function () {});
+    }).then(function () { return refreshFavorites(); }).catch(function () {});
+  }
+
+  function refreshFavorites() {
+    if (!authToken) return Promise.resolve();
+    return api('/api/favorites').then(function (data) {
+      favIds = (data.items || []).map(function (x) { return x.id; });
+      updateFavBadge();
+    }).catch(function () {
+      favIds = lsGet('zhidu_favs', []);
+      updateFavBadge();
+    });
+  }
+
+  function getFavorites() { return favIds.slice(); }
+  function isFav(id) { return favIds.indexOf(id) !== -1; }
+  function toggleFav(id) {
+    if (!authToken) { toast('请先登录'); return Promise.resolve(false); }
+    return api('/api/favorites', { method: 'POST', body: { material_id: id } }).then(function (data) {
+      if (data.favorited) {
+        if (favIds.indexOf(id) < 0) favIds.unshift(id);
+        toast('已收藏');
+      } else {
+        favIds = favIds.filter(function (x) { return x !== id; });
+        toast('已取消收藏');
+      }
+      updateFavBadge();
+      return data.favorited;
+    }).catch(function (err) {
+      toast(err.message || '操作失败');
+      return isFav(id);
+    });
+  }
+  function updateFavBadge() {
+    var n = favIds.length;
+    var b = document.getElementById('favBadge');
+    if (b) { b.textContent = n; b.style.display = n ? '' : 'none'; }
+    var s = document.getElementById('stat-fav');
+    if (s) s.textContent = n;
+  }
+
+  function getRecent() { return lsGet('zhidu_recent', []); }
+  function addRecent(id) {
+    var arr = getRecent().filter(function (x) { return x !== id; });
+    arr.unshift(id);
+    lsSet('zhidu_recent', arr.slice(0, 12));
+  }
+
+  function getNotes() { return lsGet('zhidu_notes', []); }
+  function setNotes(arr) { lsSet('zhidu_notes', arr); }
+
+  function getTheme() { return localStorage.getItem('zhidu_theme') || 'light'; }
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+    localStorage.setItem('zhidu_theme', t);
+    var btn = document.getElementById('themeBtn');
+    if (btn) btn.textContent = t === 'dark' ? '☀' : '◐';
+  }
+
+  function toast(msg) {
+    var el = document.getElementById('toast');
+    el.textContent = msg; el.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove('show'); }, 2800);
+  }
+  function escapeHtml(s) {
+    if (s == null) return '';
+    var d = document.createElement('div'); d.textContent = String(s); return d.innerHTML;
+  }
+  function permBadge(perm) {
+    var map = { private:['badge-private','私有'], class:['badge-class','班级'], public:['badge-public','公开'], review:['badge-review','审核中'] };
+    var p = map[perm] || map.private;
+    return '<span class="badge ' + p[0] + '">' + p[1] + '</span>';
+  }
+  function stageName(id) {
+    var s = STAGES.find(function (x) { return x.id === id; });
+    return s ? s.name : id;
+  }
+
+  /* ========== API 客户端 ========== */
+  var API_BASE = localStorage.getItem('zhidu_api') || '';
+  var authToken = localStorage.getItem('zhidu_token') || '';
+
+  function api(path, options) {
+    options = options || {};
+    var headers = Object.assign({}, options.headers || {});
+    var isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+    if (options.body && !isFormData) headers['Content-Type'] = 'application/json';
+    if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
+    return fetch(API_BASE + path, {
+      method: options.method || 'GET',
+      headers: headers,
+      body: options.body ? (isFormData ? options.body : JSON.stringify(options.body)) : undefined,
+      signal: options.signal
+    }).then(function (res) {
+      return res.json().then(function (data) {
+        if (!res.ok) {
+          var err = new Error((data && data.error) || ('请求失败 ' + res.status));
+          err.status = res.status;
+          err.data = data;
+          throw err;
+        }
+        return data;
+      });
+    });
+  }
+
+  function loadAssistantModels() {
+    var select = document.getElementById('asstModel');
+    select.disabled = true;
+    select.innerHTML = '<option>正在连接 Ollama…</option>';
+    document.getElementById('asstSub').textContent = '正在查找本机模型…';
+    return api('/api/assistant/models').then(function (data) {
+      var models = data.models || [];
+      if (!models.length) {
+        select.innerHTML = '<option value="">未安装模型</option>';
+        document.getElementById('asstSub').textContent = 'Ollama 已连接，请先下载模型';
+        return;
+      }
+      var saved = localStorage.getItem('zhidu_ollama_model');
+      var selected = models.indexOf(saved) >= 0 ? saved : models[0];
+      select.innerHTML = '';
+      models.forEach(function (model) {
+        var option = document.createElement('option');
+        option.value = model;
+        option.textContent = model;
+        select.appendChild(option);
+      });
+      select.value = selected;
+      select.disabled = false;
+      localStorage.setItem('zhidu_ollama_model', selected);
+      document.getElementById('asstSub').textContent = '本机运行 · ' + selected;
+    }).catch(function () {
+      select.innerHTML = '<option value="">Ollama 未连接</option>';
+      document.getElementById('asstSub').textContent = '请启动本机 Ollama（127.0.0.1:11434）';
+    });
+  }
+  document.getElementById('asstModel').addEventListener('change', function () {
+    if (!this.value) return;
+    localStorage.setItem('zhidu_ollama_model', this.value);
+    document.getElementById('asstSub').textContent = '本机运行 · ' + this.value;
+  });
+
+  /* Login */
+  document.getElementById('tabVisitor').onclick = function () {
+    loginRole = 'visitor';
+    this.classList.add('active'); this.setAttribute('aria-selected','true');
+    document.getElementById('tabAdmin').classList.remove('active');
+    document.getElementById('tabAdmin').setAttribute('aria-selected','false');
+    var pg = document.getElementById('pwdGroup'); pg.style.display = 'none'; pg.hidden = true;
+    document.getElementById('loginHint').innerHTML = '访客输入昵称即可进入，无需密码。<br />管理者请使用已分配的账号与密码登录。';
+  };
+  document.getElementById('tabAdmin').onclick = function () {
+    loginRole = 'admin';
+    this.classList.add('active'); this.setAttribute('aria-selected','true');
+    document.getElementById('tabVisitor').classList.remove('active');
+    document.getElementById('tabVisitor').setAttribute('aria-selected','false');
+    var pg = document.getElementById('pwdGroup'); pg.style.display = 'block'; pg.hidden = false;
+    document.getElementById('loginHint').innerHTML = '请输入管理者账号与密码。';
+  };
+
+  function doLogin() {
+    var name = document.getElementById('loginUser').value.trim();
+    if (!name) { toast('请输入用户名'); return; }
+    var pwd = document.getElementById('loginPwd').value;
+    var btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.textContent = '登录中…';
+    api('/api/auth/login', {
+      method: 'POST',
+      body: { username: name, password: pwd, role: loginRole }
+    }).then(function (data) {
+      authToken = data.token;
+      currentUser = data.user;
+      localStorage.setItem('zhidu_token', authToken);
+      lsSet('zhidu_user', currentUser);
+      enterApp();
+    }).catch(function (err) {
+      toast(err.message || '登录失败');
+    }).finally(function () {
+      btn.disabled = false;
+      btn.textContent = '进入平台';
+    });
+  }
+  document.getElementById('loginBtn').onclick = doLogin;
+  document.getElementById('loginUser').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('loginPwd').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
+
+  function enterApp() {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('appShell').classList.add('show');
+    document.getElementById('userName').textContent = currentUser.name;
+    document.getElementById('userAvatar').textContent = currentUser.role === 'admin' ? '管' : currentUser.name.slice(0,1);
+    document.getElementById('userRoleLabel').textContent = currentUser.role === 'admin' ? '· 管理者' : '· 访客';
+    document.querySelectorAll('.admin-only').forEach(function (el) {
+      el.style.display = currentUser.role === 'admin' ? '' : 'none';
+    });
+    document.querySelectorAll('.admin-only-block').forEach(function (el) {
+      el.style.display = currentUser.role === 'admin' ? 'block' : 'none';
+    });
+    loadLibrary().then(function () {
+      updateFavBadge();
+      updateReviewBadge();
+      renderHome();
+    }).catch(function () {
+      toast('无法连接后端，请确认服务已启动');
+      renderHome();
+    });
+  }
+
+  document.getElementById('logoutBtn').onclick = function () {
+    currentUser = null;
+    authToken = '';
+    localStorage.removeItem('zhidu_user');
+    localStorage.removeItem('zhidu_token');
+    favIds = [];
+    document.getElementById('appShell').classList.remove('show');
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('loginPwd').value = '';
+    closeMobileSidebar();
+    toast('已退出');
+  };
+
+  function closeMobileSidebar() {
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('sidebarBackdrop').classList.remove('show');
+  }
+
+  function switchView(name) {
+    if (name === 'admin' && (!currentUser || currentUser.role !== 'admin')) {
+      toast('仅管理者可进入审核'); return;
+    }
+    document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+    document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active'); });
+    var view = document.getElementById('view-' + name);
+    if (view) view.classList.add('active');
+    var nav = document.querySelector('.nav-item[data-view="' + name + '"]');
+    if (nav) nav.classList.add('active');
+    closeMobileSidebar();
+    var titles = {
+      home:'学段首页', favorites:'我的收藏', notes:'学习笔记', mine:'我的资料',
+      upload:'上传资料', admin:'资源审核', about:'关于与帮助'
+    };
+    if (name !== 'stage') {
+      document.getElementById('breadcrumb').innerHTML = '<span class="page-title">' + (titles[name] || name) + '</span>';
+    }
+    if (name === 'home') renderHome();
+    else if (name === 'favorites') renderFavorites();
+    else if (name === 'notes') renderNotes();
+    else if (name === 'mine') renderMine();
+    else if (name === 'admin') renderAdmin();
+    else if (name === 'upload') initUploadForm();
+  }
+
+  document.querySelectorAll('.nav-item').forEach(function (btn) {
+    btn.addEventListener('click', function () { switchView(btn.dataset.view); });
+  });
+  document.getElementById('menuBtn').onclick = function () {
+    var sb = document.getElementById('sidebar');
+    var bd = document.getElementById('sidebarBackdrop');
+    var open = !sb.classList.contains('mobile-open');
+    sb.classList.toggle('mobile-open', open);
+    bd.classList.toggle('show', open);
+  };
+  document.getElementById('sidebarBackdrop').onclick = closeMobileSidebar;
+
+  document.querySelectorAll('[data-quick]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var q = btn.dataset.quick;
+      if (q === 'search') openSearchModal();
+      else switchView(q);
+    });
+  });
+  document.querySelectorAll('[data-goto]').forEach(function (btn) {
+    btn.addEventListener('click', function () { switchView(btn.dataset.goto); });
+  });
+
+  /* Theme */
+  document.getElementById('themeBtn').onclick = function () {
+    applyTheme(getTheme() === 'dark' ? 'light' : 'dark');
+  };
+
+  /* Home */
+  function renderHome() {
+    var stageCards = STAGES.map(function (s) {
+      var count = samplePdfs.filter(function (p) { return p.stage === s.id; }).length;
+      return '<div class="stage-card" role="listitem" tabindex="0" data-stage="' + s.id + '">' +
+        '<div class="stage-icon" style="background:' + s.color + '">' + s.icon + '</div>' +
+        '<h3>' + escapeHtml(s.name) + '</h3><p>' + escapeHtml(s.desc) + '</p>' +
+        '<div class="stage-count">' + count + ' 份资料</div></div>';
+    }).join('');
+    var categories = Array.from(new Set(samplePdfs.map(function (p) { return (p.category || '').trim(); }).filter(Boolean)));
+    var categoryCards = categories.map(function (category, i) {
+      var count = samplePdfs.filter(function (p) { return (p.category || '').trim() === category; }).length;
+      var colors = ['#E6EDF8','#F5E9DF','#E7F1E8','#F1E8F4'];
+      return '<div class="stage-card" role="listitem" tabindex="0" data-category="' + escapeHtml(category) + '">' +
+        '<div class="stage-icon" style="background:' + colors[i % colors.length] + '">📚</div>' +
+        '<h3>' + escapeHtml(category) + '</h3><p>根据平台资料新增的主题</p>' +
+        '<div class="stage-count">' + count + ' 份资料</div></div>';
+    }).join('');
+    document.getElementById('stageGrid').innerHTML = stageCards + categoryCards;
+    document.querySelectorAll('.stage-card').forEach(function (card) {
+      function go() {
+        if (card.dataset.category) enterCategory(card.dataset.category);
+        else enterStage(card.dataset.stage);
+      }
+      card.addEventListener('click', go);
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+      });
+    });
+    document.getElementById('stat-pdfs').textContent = samplePdfs.length;
+    document.getElementById('stat-qa').textContent = qaCount;
+    document.getElementById('stat-fav').textContent = getFavorites().length;
+    document.getElementById('stat-review').textContent = pendingReviews.length;
+
+    var recent = getRecent().map(function (id) {
+      return samplePdfs.find(function (p) { return p.id === id; });
+    }).filter(Boolean).slice(0, 6);
+    var sec = document.getElementById('recentSection');
+    if (recent.length) {
+      sec.style.display = '';
+      document.getElementById('recentList').innerHTML = recent.map(function (p) {
+        return '<div class="mini-card" data-id="' + p.id + '">' +
+          '<div class="mc-icon">📄</div><div><div class="mc-name">' + escapeHtml(p.name) + '</div>' +
+          '<div class="mc-meta">' + escapeHtml(stageName(p.stage)) + ' · ' + escapeHtml(p.subject) + '</div></div></div>';
+      }).join('');
+      document.querySelectorAll('#recentList .mini-card').forEach(function (c) {
+        c.addEventListener('click', function () { openMaterial(c.dataset.id); });
+      });
+    } else {
+      sec.style.display = 'none';
+    }
+  }
+
+  function openMaterial(id) {
+    var p = samplePdfs.find(function (x) { return x.id === id; });
+    if (!p) return;
+    addRecent(id);
+    if (p.file_url) {
+      openUploadedPdf(p);
+    } else if (p.external && p.url) {
+      window.open(p.url, '_blank', 'noopener,noreferrer');
+    } else if (p.stage) {
+      enterStage(p.stage);
+      setTimeout(function () { selectMaterial(id); }, 50);
+    }
+  }
+
+  function openUploadedPdf(item) {
+    var tab = window.open('', '_blank');
+    if (!tab) { toast('请允许弹出窗口以打开 PDF'); return; }
+    tab.opener = null;
+    fetch(API_BASE + item.file_url, {
+      headers: authToken ? { Authorization: 'Bearer ' + authToken } : {}
+    }).then(function (res) {
+      if (!res.ok) {
+        return res.json().then(function (data) {
+          throw new Error(data.error || 'PDF 打开失败');
+        });
+      }
+      return res.blob();
+    }).then(function (blob) {
+      tab.location.href = URL.createObjectURL(blob);
+    }).catch(function (err) {
+      tab.close();
+      toast(err.message || 'PDF 打开失败');
+    });
+  }
+
+  /* Stage */
+  function enterStage(stageId) {
+    currentStage = stageId; currentSubject = '全部'; selectedPdfId = null; matQuery = ''; currentCategory = null;
+    document.getElementById('matSearch').value = '';
+    var stage = STAGES.find(function (s) { return s.id === stageId; });
+    if (!stage) return;
+    document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+    document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active'); });
+    document.getElementById('view-stage').classList.add('active');
+    document.getElementById('breadcrumb').innerHTML =
+      '<a href="javascript:void(0)" id="bcHome">学段首页</a><span style="opacity:.4">/</span>' +
+      '<span class="page-title">' + escapeHtml(stage.name) + '</span>';
+    document.getElementById('bcHome').onclick = function () { switchView('home'); };
+    document.getElementById('asstTitle').textContent = stage.name + ' · 小助手';
+    loadAssistantModels();
+    document.getElementById('asstAvatar').textContent = stage.icon;
+    renderSubjects(); renderMaterials(); renderWelcome();
+  }
+
+  function enterCategory(category) {
+    var first = samplePdfs.find(function (p) { return (p.category || '').trim() === category; });
+    if (!first) return;
+    currentStage = first.stage;
+    currentCategory = category;
+    currentSubject = '全部';
+    selectedPdfId = null;
+    matQuery = '';
+    document.getElementById('matSearch').value = '';
+    document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+    document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active'); });
+    document.getElementById('view-stage').classList.add('active');
+    document.getElementById('breadcrumb').innerHTML =
+      '<a href="javascript:void(0)" id="bcHome">学段首页</a><span style="opacity:.4">/</span>' +
+      '<span class="page-title">' + escapeHtml(category) + '</span>';
+    document.getElementById('bcHome').onclick = function () { switchView('home'); };
+    document.getElementById('asstTitle').textContent = category + ' · 小助手';
+    var stage = STAGES.find(function (s) { return s.id === currentStage; });
+    document.getElementById('asstAvatar').textContent = stage ? stage.icon : '📚';
+    loadAssistantModels();
+    renderSubjects(); renderMaterials(); renderWelcome();
+  }
+
+  function renderSubjects() {
+    var stage = STAGES.find(function (s) { return s.id === currentStage; });
+    var extras = samplePdfs.filter(function (p) {
+      return currentCategory ? (p.category || '').trim() === currentCategory : p.stage === currentStage;
+    }).map(function (p) { return p.subject; });
+    var subjects = ['全部'].concat(Array.from(new Set((stage ? stage.subjects : []).concat(extras))));
+    document.getElementById('subjectList').innerHTML = subjects.map(function (s) {
+      return '<span class="subject-tag' + (currentSubject === s ? ' active' : '') +
+        '" role="listitem" tabindex="0" data-subject="' + escapeHtml(s) + '">' + escapeHtml(s) + '</span>';
+    }).join('');
+    document.querySelectorAll('.subject-tag').forEach(function (tag) {
+      function sel() { currentSubject = tag.dataset.subject; renderSubjects(); renderMaterials(); }
+      tag.addEventListener('click', sel);
+      tag.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sel(); }
+      });
+    });
+  }
+
+  function renderMaterials() {
+    var pdfs = samplePdfs.filter(function (p) {
+      return currentCategory
+        ? (p.category || '').trim() === currentCategory
+        : p.stage === currentStage;
+    });
+    if (currentSubject !== '全部') pdfs = pdfs.filter(function (p) { return p.subject === currentSubject; });
+    if (matQuery) {
+      var q = matQuery.toLowerCase();
+      pdfs = pdfs.filter(function (p) {
+        return p.name.toLowerCase().indexOf(q) !== -1 ||
+          (p.subject || '').indexOf(matQuery) !== -1 ||
+          (p.category || '').toLowerCase().indexOf(q) !== -1 ||
+          (p.source || '').toLowerCase().indexOf(q) !== -1;
+      });
+    }
+    document.getElementById('matCount').textContent = pdfs.length + ' 份';
+    var list = document.getElementById('materialList');
+    if (!pdfs.length) {
+      list.innerHTML = '<div class="empty-state">没有匹配资料，试试搜索或换学科</div>';
+      return;
+    }
+    var show = pdfs.slice(0, 80);
+    list.innerHTML = show.map(function (p) {
+      var starred = isFav(p.id);
+      return '<div class="material-item' + (selectedPdfId === p.id ? ' active' : '') + '">' +
+        '<div class="mi-icon">📄</div><div style="min-width:0;flex:1">' +
+        '<div class="mi-name">' + escapeHtml(p.name) + '</div>' +
+        '<div class="mi-meta">' + permBadge(p.perm) +
+        (p.file_url ? '<span class="badge badge-open">平台已存档</span>' :
+          (p.external ? '<span class="badge badge-open">开放</span>' : '')) +
+        (p.category ? '<span class="badge badge-open">' + escapeHtml(p.category) + '</span>' : '') +
+        '<span>' + escapeHtml(p.grade) + '</span>' +
+        (p.pages ? '<span>' + p.pages + '页</span>' : '') + '</div>' +
+        '<div class="mi-actions">' +
+        (p.file_url
+          ? '<button type="button" data-action="read" data-id="' + p.id + '">平台内阅读</button>'
+          : (p.external && p.url
+          ? '<button type="button" data-action="open" data-id="' + p.id + '">原站</button>'
+          : '<button type="button" data-action="read" data-id="' + p.id + '">翻阅</button>')) +
+        '<button type="button" data-action="ask" data-id="' + p.id + '">问助手</button>' +
+        '<button type="button" data-action="star" data-id="' + p.id + '" class="' + (starred ? 'starred' : '') + '">' +
+        (starred ? '★' : '☆') + '</button></div></div></div>';
+    }).join('') + (pdfs.length > 80
+      ? '<div class="empty-state">已显示 80 / ' + pdfs.length + '，可用搜索缩小范围</div>' : '');
+
+    list.querySelectorAll('[data-action]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var id = btn.dataset.id, action = btn.dataset.action;
+        if (action === 'open') {
+          var item = samplePdfs.find(function (x) { return x.id === id; });
+          if (item && item.url) {
+            addRecent(id);
+            window.open(item.url, '_blank', 'noopener,noreferrer');
+          }
+        } else if (action === 'read') openReader(id);
+        else if (action === 'ask') selectMaterial(id);
+        else if (action === 'star') {
+          toggleFav(id).then(function () { renderMaterials(); });
+        }
+      });
+    });
+  }
+  document.getElementById('matSearch').addEventListener('input', function (e) {
+    matQuery = e.target.value.trim();
+    renderMaterials();
+  });
+
+  function selectMaterial(id) {
+    selectedPdfId = id; renderMaterials();
+    var p = samplePdfs.find(function (x) { return x.id === id; });
+    if (!p) return;
+    addRecent(id);
+    var box = document.getElementById('asstMessages');
+    if (box.querySelector('.welcome-block')) box.innerHTML = '';
+    var text = p.external
+      ? '已选中：《' + p.name + '》\n来源：' + (p.source || '公开平台') + '\n可点击「原站」阅读；有问题直接问我。'
+      : '已锁定《' + p.name + '》。可点「翻阅」或直接提问。';
+    if (!stageChat[currentStage]) stageChat[currentStage] = [];
+    var note = { role:'ai', text:text, openUrl: p.external ? p.url : null };
+    stageChat[currentStage].push(note);
+    box.insertAdjacentHTML('beforeend', renderMsg(note));
+    box.scrollTop = box.scrollHeight;
+    document.getElementById('asstInput').focus();
+  }
+
+  function renderWelcome() {
+    var stage = STAGES.find(function (s) { return s.id === currentStage; });
+    var suggests = {
+      kindergarten:['拼音怎么读？','教孩子认数字'],
+      primary:['分数是什么？','圆的面积怎么算？'],
+      junior:['二次函数图像怎么画？','二力平衡条件'],
+      senior:['导数的几何意义','文言文翻译技巧'],
+      university:['极限怎么求？','矩阵特征值','文献综述怎么写？']
+    };
+    var chips = (suggests[currentStage] || ['帮我讲一个知识点']).map(function (t) {
+      return '<button type="button" class="suggest-chip" data-q="' + escapeHtml(t) + '">' + escapeHtml(t) + '</button>';
+    }).join('');
+    var box = document.getElementById('asstMessages');
+    if (stageChat[currentStage] && stageChat[currentStage].length) {
+      box.innerHTML = stageChat[currentStage].map(renderMsg).join('');
+      box.scrollTop = box.scrollHeight;
+      return;
+    }
+    box.innerHTML = '<div class="welcome-block"><div class="w-icon">' + stage.icon + '</div>' +
+      '<h4>你好，我是' + escapeHtml(stage.name) + '小助手</h4>' +
+      '<p>由本机 Ollama 模型回答；右侧可选学科、收藏或打开资料。</p>' +
+      '<div class="suggest-row">' + chips + '</div></div>';
+    box.querySelectorAll('.suggest-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        document.getElementById('asstInput').value = chip.dataset.q;
+        sendAssistant();
+      });
+    });
+  }
+
+  function renderMsg(m) {
+    if (m.role === 'user') return '<div class="msg msg-user">' + escapeHtml(m.text) + '</div>';
+    var h = '<div class="msg msg-ai">';
+    if (m.thinking) h += '<div class="thinking">' + escapeHtml(m.thinking) + '</div>';
+    h += '<div style="white-space:pre-wrap;">' + escapeHtml(m.text) + '</div>';
+    if (m.openUrl) {
+      h += '<div class="citation"><a href="' + escapeHtml(m.openUrl) +
+        '" target="_blank" rel="noopener noreferrer">在原站打开 →</a></div>';
+    } else if (m.page) {
+      h += '<div class="citation">第 ' + m.page + ' 页 · ' + escapeHtml(m.section || '') +
+        (m.srcName ? ' · ' + escapeHtml(m.srcName) : '') + '</div>';
+    }
+    return h + '</div>';
+  }
+
+  function sendAssistant() {
+    var input = document.getElementById('asstInput');
+    var text = input.value.trim();
+    if (!text || !currentStage) return;
+    var model = document.getElementById('asstModel').value;
+    if (!model) { toast('请先启动 Ollama 并安装一个模型'); return; }
+    var stageAtSend = currentStage;
+    var turn = ++assistantTurn;
+    var sendButton = document.getElementById('asstSend');
+    sendButton.disabled = true;
+    assistantAbortController = new AbortController();
+    input.value = '';
+    if (!stageChat[stageAtSend]) stageChat[stageAtSend] = [];
+    stageChat[stageAtSend].push({ role:'user', text:text });
+    var box = document.getElementById('asstMessages');
+    if (box.querySelector('.welcome-block')) box.innerHTML = '';
+    box.insertAdjacentHTML('beforeend', renderMsg({ role:'user', text:text }));
+    box.insertAdjacentHTML('beforeend', '<div class="msg msg-ai" id="typingMsg"><div class="typing"><span></span><span></span><span></span></div></div>');
+    box.scrollTop = box.scrollHeight;
+    var history = stageChat[stageAtSend].slice(0, -1).slice(-12).map(function (message) {
+      return { role:message.role === 'ai' ? 'assistant' : 'user', content:message.text };
+    });
+    api('/api/assistant/chat', {
+      method: 'POST',
+      signal: assistantAbortController.signal,
+      body: {
+        question: text,
+        model: model,
+        stage: stageAtSend,
+        material_id: selectedPdfId,
+        history: history
+      }
+    }).then(function (data) {
+      if (turn !== assistantTurn) return;
+      var ai = { role:'ai', text:data.answer };
+      stageChat[stageAtSend].push(ai);
+      if (currentStage === stageAtSend) {
+        var typing = document.getElementById('typingMsg');
+        if (typing) typing.outerHTML = renderMsg(ai);
+        box.scrollTop = box.scrollHeight;
+      }
+      qaCount++;
+      document.getElementById('stat-qa').textContent = qaCount;
+    }).catch(function (err) {
+      if (turn === assistantTurn && err.name !== 'AbortError') {
+        var typing = document.getElementById('typingMsg');
+        if (typing) typing.remove();
+        toast(err.message || '本机模型调用失败');
+      }
+    }).finally(function () {
+      if (turn === assistantTurn) {
+        sendButton.disabled = false;
+        assistantAbortController = null;
+      }
+    });
+  }
+  document.getElementById('asstSend').onclick = sendAssistant;
+  document.getElementById('asstInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAssistant(); }
+  });
+  document.getElementById('clearChatBtn').onclick = function () {
+    if (!currentStage) return;
+    assistantTurn++;
+    if (assistantAbortController) assistantAbortController.abort();
+    document.getElementById('asstSend').disabled = false;
+    var typing = document.getElementById('typingMsg');
+    if (typing) typing.remove();
+    stageChat[currentStage] = [];
+    renderWelcome();
+    toast('对话已清空');
+  };
+  document.getElementById('summarizeBtn').onclick = function () {
+    if (!selectedPdfId) { toast('请先在右侧选择一份平台内资料'); return; }
+    var model = document.getElementById('asstModel').value || localStorage.getItem('zhidu_ollama_model');
+    if (!model) { toast('请先启动 Ollama 并安装一个模型'); return; }
+    var button = this;
+    button.disabled = true;
+    api('/api/assistant/summarize', {
+      method: 'POST',
+      body: { material_id: selectedPdfId, model: model }
+    }).then(function (data) {
+      var item = samplePdfs.find(function (p) { return p.id === selectedPdfId; });
+      var summary = {
+        role: 'ai',
+        text: (item ? '《' + item.name + '》学习摘要\n\n' : '学习摘要\n\n') + data.summary,
+        thinking: '已分析 ' + data.pages_analyzed + ' / ' + data.total_pages + ' 页'
+      };
+      if (!stageChat[currentStage]) stageChat[currentStage] = [];
+      stageChat[currentStage].push(summary);
+      renderWelcome();
+      toast('资料摘要已生成');
+    }).catch(function (err) {
+      toast(err.message || '生成摘要失败');
+    }).finally(function () { button.disabled = false; });
+  };
+
+  /* Reader */
+  function buildPages(p) {
+    var pages = [{ title: p.name.replace(/\.pdf$/i,''), body:'学科：' + p.subject + '　·　' + p.grade + '\n\n本地预览页。开放资源请点击「原站」阅读完整内容。\n左右键或按钮翻页。' }];
+    var max = Math.min(p.pages || 6, 10);
+    for (var i = 2; i <= max; i++) {
+      pages.push({ title:'第 ' + i + ' 页 · ' + p.subject, body:'本页围绕「' + p.subject + '」要点提示。\n\n（预览内容 · 第 ' + i + ' 页）' });
+    }
+    return pages;
+  }
+  function openReader(id) {
+    var p = samplePdfs.find(function (x) { return x.id === id; });
+    if (!p) return;
+    if (p.file_url) {
+      addRecent(id);
+      openUploadedPdf(p);
+      return;
+    }
+    if (p.external && p.url) {
+      addRecent(id);
+      window.open(p.url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    selectedPdfId = id; addRecent(id); renderMaterials();
+    readerState = { id:id, pages:buildPages(p), idx:0 };
+    document.getElementById('readerTitle').textContent = p.name;
+    document.getElementById('readerStarBtn').textContent = isFav(id) ? '★ 已收藏' : '☆ 收藏';
+    document.getElementById('readerOverlay').classList.add('show');
+    renderReaderPage();
+  }
+  function renderReaderPage() {
+    var pg = readerState.pages[readerState.idx];
+    document.getElementById('readerPage').innerHTML =
+      '<h4>' + escapeHtml(pg.title) + '</h4><p style="white-space:pre-wrap;">' + escapeHtml(pg.body) + '</p>' +
+      '<div style="text-align:center;margin-top:24px;font-size:12px;color:var(--text-muted);">— ' + (readerState.idx+1) + ' —</div>';
+    document.getElementById('readerPageInfo').textContent = (readerState.idx+1) + ' / ' + readerState.pages.length;
+    document.getElementById('readerPrev').disabled = readerState.idx <= 0;
+    document.getElementById('readerNext').disabled = readerState.idx >= readerState.pages.length - 1;
+  }
+  document.getElementById('readerPrev').onclick = function () {
+    if (readerState.idx > 0) { readerState.idx--; renderReaderPage(); }
+  };
+  document.getElementById('readerNext').onclick = function () {
+    if (readerState.idx < readerState.pages.length - 1) { readerState.idx++; renderReaderPage(); }
+  };
+  document.getElementById('readerCloseBtn').onclick = function () {
+    document.getElementById('readerOverlay').classList.remove('show');
+  };
+  document.getElementById('readerAskBtn').onclick = function () {
+    document.getElementById('readerOverlay').classList.remove('show');
+    if (readerState.id) selectMaterial(readerState.id);
+  };
+  document.getElementById('readerStarBtn').onclick = function () {
+    if (!readerState.id) return;
+    var btn = this;
+    toggleFav(readerState.id).then(function (fav) {
+      btn.textContent = fav ? '★ 已收藏' : '☆ 收藏';
+    });
+  };
+  document.getElementById('readerOverlay').onclick = function (e) {
+    if (e.target.id === 'readerOverlay') e.target.classList.remove('show');
+  };
+
+  /* Favorites */
+  function renderFavorites() {
+    var list = document.getElementById('favList');
+    list.innerHTML = '<div class="empty-state">加载中…</div>';
+    api('/api/favorites').then(function (data) {
+      var items = data.items || [];
+      favIds = items.map(function (x) { return x.id; });
+      updateFavBadge();
+      document.getElementById('favCountLabel').textContent = items.length + ' 份';
+      if (!items.length) {
+        list.innerHTML = '<div class="empty-state">还没有收藏。在资料列表点 ☆ 即可收藏。</div>';
+        return;
+      }
+      list.innerHTML = items.map(function (p) {
+        p.external = !!p.external;
+        return '<div class="mini-card" data-id="' + p.id + '">' +
+          '<div class="mc-icon">★</div><div style="flex:1;min-width:0">' +
+          '<div class="mc-name">' + escapeHtml(p.name) + '</div>' +
+          '<div class="mc-meta">' + escapeHtml(stageName(p.stage)) + ' · ' + escapeHtml(p.subject) +
+          ' · ' + escapeHtml(p.grade || '') + '</div>' +
+          '<div class="mi-actions" style="margin-top:6px">' +
+          '<button type="button" data-open="' + p.id + '">' + (p.file_url ? '平台内阅读' : (p.external ? '原站' : '翻阅')) + '</button>' +
+          '<button type="button" data-unstar="' + p.id + '">取消收藏</button></div></div></div>';
+      }).join('');
+      list.querySelectorAll('[data-open]').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var p = items.find(function (x) { return x.id === btn.dataset.open; });
+          if (!p) return;
+          if (p.file_url) { addRecent(p.id); openUploadedPdf(p); }
+          else if (p.external && p.url) { addRecent(p.id); window.open(p.url, '_blank', 'noopener,noreferrer'); }
+          else openReader(p.id);
+        });
+      });
+      list.querySelectorAll('[data-unstar]').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          toggleFav(btn.dataset.unstar).then(function () { renderFavorites(); });
+        });
+      });
+    }).catch(function (err) {
+      list.innerHTML = '<div class="empty-state">' + escapeHtml(err.message || '加载失败') + '</div>';
+    });
+  }
+
+  /* Notes（服务端） */
+  var notesCache = [];
+  function renderNoteReferencePicker() {
+    var select = document.getElementById('noteMaterialSelect');
+    var materials = samplePdfs.filter(function (p) { return p.id && (!p.external || p.file_url); });
+    select.innerHTML = '<option value="">选择平台学习资料</option>' + materials.map(function (p) {
+      return '<option value="' + escapeHtml(p.id) + '">' + escapeHtml(p.name) + '</option>';
+    }).join('');
+    var refList = document.getElementById('noteReferenceList');
+    refList.innerHTML = noteReferences.map(function (ref) {
+      return '<span class="note-reference-chip">' + escapeHtml(ref.name) +
+        '<button type="button" aria-label="移除引用 ' + escapeHtml(ref.name) +
+        '" data-remove-reference="' + escapeHtml(ref.id) + '" style="border:0;background:none;color:inherit;cursor:pointer;">×</button></span>';
+    }).join('');
+    refList.querySelectorAll('[data-remove-reference]').forEach(function (button) {
+      button.onclick = function () {
+        noteReferences = noteReferences.filter(function (ref) { return ref.id !== button.dataset.removeReference; });
+        renderNoteReferencePicker();
+      };
+    });
+  }
+  document.getElementById('insertNoteCitationBtn').onclick = function () {
+    var id = document.getElementById('noteMaterialSelect').value;
+    var material = samplePdfs.find(function (p) { return p.id === id && (!p.external || p.file_url); });
+    if (!material) { toast('请选择一份平台内资料'); return; }
+    if (!noteReferences.some(function (ref) { return ref.id === id; })) {
+      noteReferences.push({ id: material.id, name: material.name, subject: material.subject, grade: material.grade, stage: material.stage });
+    }
+    var textarea = document.getElementById('noteBody');
+    var citation = '[资料引用：' + material.name + '（' + stageName(material.stage) + ' · ' + material.subject + (material.grade ? ' · ' + material.grade : '') + '）]';
+    var start = textarea.selectionStart, end = textarea.selectionEnd;
+    textarea.value = textarea.value.slice(0, start) + citation + textarea.value.slice(end);
+    textarea.focus();
+    textarea.selectionStart = textarea.selectionEnd = start + citation.length;
+    renderNoteReferencePicker();
+  };
+  function renderNotes() {
+    var body = document.getElementById('notesListBody');
+    body.innerHTML = '<div class="empty-state">加载中…</div>';
+    api('/api/notes').then(function (data) {
+      notesCache = data.items || [];
+      document.getElementById('notesCount').textContent = notesCache.length;
+      if (!notesCache.length) {
+        body.innerHTML = '<div class="empty-state">暂无笔记，点击「新建笔记」开始</div>';
+        document.getElementById('noteTitle').value = '';
+        document.getElementById('noteBody').value = '';
+        noteReferences = [];
+        renderNoteReferencePicker();
+        currentNoteId = null;
+        return;
+      }
+      body.innerHTML = notesCache.map(function (n) {
+        var ts = (n.updated_at || n.updated || '').slice(0, 16).replace('T', ' ');
+        return '<div class="note-item' + (currentNoteId === n.id ? ' active' : '') + '" data-id="' + n.id + '">' +
+          '<div class="ni-title">' + escapeHtml(n.title || '无标题') + '</div>' +
+          '<div class="ni-meta">' + escapeHtml(ts) + '</div></div>';
+      }).join('');
+      body.querySelectorAll('.note-item').forEach(function (item) {
+        item.addEventListener('click', function () { loadNote(item.dataset.id); });
+      });
+      if (currentNoteId && notesCache.some(function (n) { return n.id === currentNoteId; })) {
+        loadNote(currentNoteId);
+      } else {
+        loadNote(notesCache[0].id);
+      }
+    }).catch(function (err) {
+      body.innerHTML = '<div class="empty-state">' + escapeHtml(err.message || '加载失败') + '</div>';
+    });
+  }
+  function loadNote(id) {
+    var n = notesCache.find(function (x) { return x.id === id; });
+    if (!n) return;
+    currentNoteId = id;
+    document.getElementById('noteTitle').value = n.title || '';
+    document.getElementById('noteBody').value = n.body || '';
+    noteReferences = (n.references || []).map(function (ref) {
+      return { id: ref.id, name: ref.name, subject: ref.subject, grade: ref.grade, stage: ref.stage };
+    });
+    renderNoteReferencePicker();
+    document.querySelectorAll('.note-item').forEach(function (el) {
+      el.classList.toggle('active', el.dataset.id === id);
+    });
+  }
+  document.getElementById('newNoteBtn').onclick = function () {
+    api('/api/notes', {
+      method: 'POST',
+      body: { title: '新笔记', body: '' }
+    }).then(function (data) {
+      currentNoteId = data.item.id;
+      renderNotes();
+      document.getElementById('noteTitle').focus();
+    }).catch(function (err) { toast(err.message || '创建失败'); });
+  };
+  document.getElementById('saveNoteBtn').onclick = function () {
+    var payload = {
+      id: currentNoteId || undefined,
+      title: document.getElementById('noteTitle').value.trim() || '无标题',
+      body: document.getElementById('noteBody').value,
+      references: noteReferences.map(function (ref) { return ref.id; })
+    };
+    api('/api/notes', { method: 'POST', body: payload }).then(function (data) {
+      currentNoteId = data.item.id;
+      toast('笔记已保存');
+      renderNotes();
+    }).catch(function (err) { toast(err.message || '保存失败'); });
+  };
+  document.getElementById('deleteNoteBtn').onclick = function () {
+    if (!currentNoteId) return;
+    if (!confirm('确定删除这篇笔记？')) return;
+    api('/api/notes/' + currentNoteId, { method: 'DELETE' }).then(function () {
+      currentNoteId = null;
+      toast('已删除');
+      renderNotes();
+    }).catch(function (err) { toast(err.message || '删除失败'); });
+  };
+
+  /* Mine */
+  function renderMine() {
+    var tbody = document.getElementById('mineTable');
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted);">加载中…</td></tr>';
+    api('/api/mine').then(function (data) {
+      var mine = data.items || [];
+      if (!mine.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted);">暂无上传资料，可在「上传资料」中添加</td></tr>';
+        return;
+      }
+      tbody.innerHTML = mine.map(function (p) {
+        return '<tr><td>' + escapeHtml(p.name) + '</td><td>' + escapeHtml(stageName(p.stage)) +
+          '</td><td>' + escapeHtml(p.subject) + '</td><td>' + permBadge(p.perm) +
+          '</td><td>' + escapeHtml(p.size || '—') + '</td><td>' +
+          (p.file_url ? '<button type="button" class="btn btn-sm btn-ghost" data-open="' + p.id + '">阅读</button> ' : '') +
+          '<button type="button" class="btn btn-sm btn-ghost" data-del="' + p.id + '">删除</button></td></tr>';
+      }).join('');
+      tbody.querySelectorAll('[data-open]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var item = mine.find(function (p) { return p.id === btn.dataset.open; });
+          if (item) openUploadedPdf(item);
+        });
+      });
+      tbody.querySelectorAll('[data-del]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (!confirm('确定删除该资料？')) return;
+          api('/api/materials/' + btn.dataset.del, { method: 'DELETE' }).then(function () {
+            toast('已删除');
+            renderMine();
+            loadLibrary();
+          }).catch(function (err) { toast(err.message || '删除失败'); });
+        });
+      });
+    }).catch(function (err) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--danger);">' + escapeHtml(err.message) + '</td></tr>';
+    });
+  }
+
+  /* Upload */
+  function initUploadForm() {
+    var sel = document.getElementById('upStage');
+    sel.innerHTML = STAGES.map(function (s) {
+      return '<option value="' + s.id + '">' + s.name + '</option>';
+    }).join('');
+    sel.onchange = function () { fillGradeSubject(sel.value); };
+    fillGradeSubject(sel.value);
+    if (currentUser && currentUser.role === 'admin') {
+      document.getElementById('upPerm').innerHTML =
+        '<option value="public">公开</option><option value="private">私有</option><option value="review">待审核</option>';
+    } else {
+      document.getElementById('upPerm').innerHTML =
+        '<option value="private">仅自己（私有）</option><option value="review">申请公开（需审核）</option>';
+    }
+  }
+  function fillGradeSubject(stageId) {
+    var stage = STAGES.find(function (s) { return s.id === stageId; });
+    if (!stage) return;
+    document.getElementById('upGrade').innerHTML = stage.grades.map(function (g) {
+      return '<option value="' + g + '">' + g + '</option>';
+    }).join('');
+    document.getElementById('upSubject').innerHTML = stage.subjects.map(function (s) {
+      return '<option value="' + s + '">' + s + '</option>';
+    }).join('');
+  }
+
+  var uploadZone = document.getElementById('uploadZone');
+  var fileInput = document.getElementById('fileInput');
+  uploadZone.onclick = function () { fileInput.click(); };
+  uploadZone.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+  });
+  uploadZone.addEventListener('dragover', function (e) { e.preventDefault(); uploadZone.classList.add('dragover'); });
+  uploadZone.addEventListener('dragleave', function () { uploadZone.classList.remove('dragover'); });
+  uploadZone.addEventListener('drop', function (e) {
+    e.preventDefault(); uploadZone.classList.remove('dragover');
+    if (e.dataTransfer && e.dataTransfer.files[0]) prepareUpload(e.dataTransfer.files[0]);
+  });
+  fileInput.onchange = function () {
+    if (fileInput.files[0]) prepareUpload(fileInput.files[0]);
+    fileInput.value = '';
+  };
+  function prepareUpload(f) {
+    if (!f) return;
+    if (f.type !== 'application/pdf' && !/\.pdf$/i.test(f.name)) { toast('请上传 PDF 文件'); return; }
+    if (f.size > 50 * 1024 * 1024) { toast('文件请控制在 50 MB 以内'); return; }
+    pendingFile = f;
+    document.getElementById('upCategory').value = '';
+    document.getElementById('classifyUploadStatus').textContent = '';
+    document.getElementById('uploadFileName').textContent = f.name + '（' + (f.size/1024/1024).toFixed(1) + ' MB）';
+    document.getElementById('uploadForm').style.display = 'block';
+    initUploadForm();
+  }
+  document.getElementById('classifyUploadBtn').onclick = function () {
+    if (!pendingFile) { toast('请先选择 PDF 文件'); return; }
+    var model = document.getElementById('asstModel').value || localStorage.getItem('zhidu_ollama_model');
+    if (!model) {
+      var classifyButton = this;
+      classifyButton.disabled = true;
+      loadAssistantModels().then(function () {
+        classifyButton.disabled = false;
+        if (document.getElementById('asstModel').value) classifyButton.click();
+        else toast('请先启动 Ollama 并安装一个模型');
+      });
+      return;
+    }
+    var button = this;
+    var status = document.getElementById('classifyUploadStatus');
+    button.disabled = true;
+    status.textContent = '正在读取并识别…';
+    var formData = new FormData();
+    formData.append('file', pendingFile);
+    formData.append('name', pendingFile.name);
+    formData.append('stage', document.getElementById('upStage').value);
+    formData.append('model', model);
+    api('/api/assistant/classify', { method: 'POST', body: formData }).then(function (data) {
+      var suggestion = data.suggestion;
+      document.getElementById('upStage').value = suggestion.stage;
+      fillGradeSubject(suggestion.stage);
+      var gradeSelect = document.getElementById('upGrade');
+      if (suggestion.grade && !Array.from(gradeSelect.options).some(function (option) { return option.value === suggestion.grade; })) {
+        gradeSelect.add(new Option(suggestion.grade, suggestion.grade));
+      }
+      if (suggestion.grade) gradeSelect.value = suggestion.grade;
+      var subjectSelect = document.getElementById('upSubject');
+      if (!Array.from(subjectSelect.options).some(function (option) { return option.value === suggestion.subject; })) {
+        subjectSelect.add(new Option(suggestion.subject, suggestion.subject));
+      }
+      subjectSelect.value = suggestion.subject;
+      document.getElementById('upCategory').value = suggestion.category;
+      status.textContent = '识别完成（' + data.pages_analyzed + ' 页），可修改后确认';
+    }).catch(function (err) {
+      status.textContent = '';
+      toast(err.message || '分类识别失败');
+    }).finally(function () { button.disabled = false; });
+  };
+  document.getElementById('cancelUploadBtn').onclick = function () {
+    pendingFile = null;
+    document.getElementById('uploadForm').style.display = 'none';
+  };
+  document.getElementById('confirmUploadBtn').onclick = function () {
+    if (!pendingFile || !currentUser) return;
+    var stage = document.getElementById('upStage').value;
+    var grade = document.getElementById('upGrade').value;
+    var subject = document.getElementById('upSubject').value;
+    var category = document.getElementById('upCategory').value.trim();
+    var perm = document.getElementById('upPerm').value;
+    var btn = document.getElementById('confirmUploadBtn');
+    btn.disabled = true;
+    var formData = new FormData();
+    formData.append('file', pendingFile);
+    formData.append('name', pendingFile.name);
+    formData.append('stage', stage);
+    formData.append('subject', subject);
+    formData.append('category', category);
+    formData.append('grade', grade);
+    formData.append('perm', perm);
+    api('/api/upload', {
+      method: 'POST',
+      body: formData
+    }).then(function (data) {
+      if (data.item) samplePdfs.unshift(data.item);
+      pendingFile = null;
+      document.getElementById('uploadForm').style.display = 'none';
+      updateReviewBadge();
+      loadLibrary();
+      toast(perm === 'review' ? '已上传，等待审核' : '上传成功');
+    }).catch(function (err) {
+      toast(err.message || '上传失败');
+    }).finally(function () {
+      btn.disabled = false;
+    });
+  };
+
+  /* Admin */
+  function updateReviewBadge() {
+    if (!authToken || !currentUser || currentUser.role !== 'admin') {
+      var b0 = document.getElementById('reviewBadge');
+      if (b0) b0.style.display = 'none';
+      return;
+    }
+    api('/api/reviews').then(function (data) {
+      pendingReviews = data.items || [];
+      var n = pendingReviews.length;
+      var b = document.getElementById('reviewBadge');
+      if (b) { b.textContent = n; b.style.display = n ? '' : 'none'; }
+      var s = document.getElementById('stat-review');
+      if (s) s.textContent = n;
+    }).catch(function () {});
+  }
+  function renderAdmin() {
+    var tbody = document.getElementById('adminTable');
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted);">加载中…</td></tr>';
+    api('/api/reviews').then(function (data) {
+      pendingReviews = data.items || [];
+      if (!pendingReviews.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted);">暂无待审核</td></tr>';
+        return;
+      }
+      tbody.innerHTML = pendingReviews.map(function (r) {
+        return '<tr><td>' + escapeHtml(r.name) + '</td><td>' + escapeHtml(r.uploader_name || r.uploader || '') +
+          '</td><td>' + escapeHtml(r.subject) + ' / ' + escapeHtml(r.grade) +
+          '</td><td>' + permBadge('review') + '</td><td>' +
+          '<button type="button" class="btn btn-sm btn-primary" data-approve="' + r.id + '">通过</button> ' +
+          '<button type="button" class="btn btn-sm btn-ghost" data-reject="' + r.id + '">驳回</button></td></tr>';
+      }).join('');
+      tbody.querySelectorAll('[data-approve]').forEach(function (btn) {
+        btn.addEventListener('click', function () { approve(btn.dataset.approve); });
+      });
+      tbody.querySelectorAll('[data-reject]').forEach(function (btn) {
+        btn.addEventListener('click', function () { reject(btn.dataset.reject); });
+      });
+    }).catch(function (err) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--danger);">' + escapeHtml(err.message) + '</td></tr>';
+    });
+  }
+  function approve(id) {
+    api('/api/reviews/approve', { method: 'POST', body: { id: id } }).then(function () {
+      toast('已通过');
+      renderAdmin();
+      updateReviewBadge();
+      loadLibrary();
+    }).catch(function (err) { toast(err.message || '操作失败'); });
+  }
+  function reject(id) {
+    api('/api/reviews/reject', { method: 'POST', body: { id: id } }).then(function () {
+      toast('已驳回');
+      renderAdmin();
+      updateReviewBadge();
+    }).catch(function (err) { toast(err.message || '操作失败'); });
+  }
+  document.getElementById('archivePublicPdfsBtn').onclick = function () {
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = '正在检查公开来源…';
+    api('/api/admin/archive-public-pdfs', { method: 'POST', body: {} }).then(function (data) {
+      loadLibrary();
+      var message = '已存档 ' + data.downloaded + ' 份 PDF';
+      if (data.already_saved) message += '，已有 ' + data.already_saved + ' 份';
+      if (data.not_direct_pdf) message += '，跳过 ' + data.not_direct_pdf + ' 个非 PDF 直链';
+      if (data.failures && data.failures.length) message += '，' + data.failures.length + ' 个来源下载失败';
+      toast(message);
+    }).catch(function (err) {
+      toast(err.message || '公开 PDF 归档失败');
+    }).finally(function () {
+      btn.disabled = false;
+      btn.textContent = '归档可下载公开 PDF';
+    });
+  };
+
+  /* Global search */
+  function openSearchModal() {
+    document.getElementById('searchModal').classList.add('show');
+    var inp = document.getElementById('modalSearchInput');
+    inp.value = '';
+    document.getElementById('modalResults').innerHTML =
+      '<div class="modal-empty">输入关键词搜索资料</div>';
+    setTimeout(function () { inp.focus(); }, 50);
+  }
+  function closeSearchModal() {
+    document.getElementById('searchModal').classList.remove('show');
+  }
+  document.getElementById('globalSearchBtn').onclick = openSearchModal;
+  document.getElementById('searchModal').onclick = function (e) {
+    if (e.target.id === 'searchModal') closeSearchModal();
+  };
+  document.getElementById('modalSearchInput').addEventListener('input', function (e) {
+    var q = e.target.value.trim().toLowerCase();
+    var box = document.getElementById('modalResults');
+    if (!q) {
+      box.innerHTML = '<div class="modal-empty">输入关键词搜索资料</div>';
+      return;
+    }
+    var hits = samplePdfs.filter(function (p) {
+      return p.name.toLowerCase().indexOf(q) !== -1 ||
+        (p.subject || '').toLowerCase().indexOf(q) !== -1 ||
+        (p.source || '').toLowerCase().indexOf(q) !== -1 ||
+        (p.grade || '').indexOf(q) !== -1;
+    }).slice(0, 20);
+    if (!hits.length) {
+      box.innerHTML = '<div class="modal-empty">未找到相关资料</div>';
+      return;
+    }
+    box.innerHTML = hits.map(function (p) {
+      return '<div class="modal-result-item" data-id="' + p.id + '">' +
+        '<span>📄</span><div><div class="mri-name">' + escapeHtml(p.name) + '</div>' +
+        '<div class="mri-meta">' + escapeHtml(stageName(p.stage)) + ' · ' + escapeHtml(p.subject) +
+        (p.source ? ' · ' + escapeHtml(p.source) : '') + '</div></div></div>';
+    }).join('');
+    box.querySelectorAll('.modal-result-item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        closeSearchModal();
+        openMaterial(item.dataset.id);
+      });
+    });
+  });
+
+  document.getElementById('topSearch').addEventListener('focus', function () { openSearchModal(); });
+  document.getElementById('topSearch').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { openSearchModal(); document.getElementById('modalSearchInput').value = this.value; }
+  });
+
+  /* Keyboard */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeSearchModal();
+      document.getElementById('readerOverlay').classList.remove('show');
+      closeMobileSidebar();
+    }
+    if ((e.key === '/' || (e.key === 'k' && (e.metaKey || e.ctrlKey))) && currentUser) {
+      var tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      e.preventDefault();
+      openSearchModal();
+    }
+    if (document.getElementById('readerOverlay').classList.contains('show')) {
+      if (e.key === 'ArrowLeft') document.getElementById('readerPrev').click();
+      if (e.key === 'ArrowRight') document.getElementById('readerNext').click();
+    }
+  });
+
+  /* Init */
+  applyTheme(getTheme());
+  var saved = lsGet('zhidu_user', null);
+  if (authToken && saved && saved.name && (saved.role === 'visitor' || saved.role === 'admin')) {
+    currentUser = saved;
+    // 校验 token 是否仍有效
+    api('/api/me').then(function (data) {
+      currentUser = data.user;
+      lsSet('zhidu_user', currentUser);
+      enterApp();
+    }).catch(function () {
+      authToken = '';
+      localStorage.removeItem('zhidu_token');
+      localStorage.removeItem('zhidu_user');
+    });
+  }
+})();
+</script>
+</body>
+</html>
